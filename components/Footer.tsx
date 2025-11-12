@@ -7,12 +7,9 @@ import {
   FaYoutube,
   FaDiscord,
   FaPlayCircle,
-  FaBookOpen,
   FaTags,
-  FaCalendarAlt,
   FaNewspaper,
   FaInfoCircle,
-  FaEnvelope,
   FaShieldAlt,
   FaBalanceScale,
   FaQuestionCircle
@@ -20,14 +17,11 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-linear-to-br from-[#008E7A] via-[#00C9B0] via-[#00C9B0] to-[#008E7A] text-white py-10 mt-10 shadow-[0_0_60px_#00E2C4]/90 relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-[#008E7A] via-[#00C9B0] to-[#008E7A] text-white py-10 mt-10 shadow-[0_0_60px_#00E2C4]/90 relative overflow-hidden">
       <div className="absolute inset-0 z-0 opacity-20">
-        <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-white rounded-full mix-blend-overlay animate-float"></div>
-        <div className="absolute -bottom-1/5 -right-1/6 w-1/2 h-1/3 bg-white rounded-full mix-blend-overlay animate-float-delay"></div>
-        <div className="absolute top-1/2 left-1/4 w-1/4 h-1/4 bg-white rounded-full mix-blend-overlay animate-float-alt"></div>
       </div>
+
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
-        
         <div>
           <Link href="/">
             <Image
@@ -73,49 +67,13 @@ export default function Footer() {
             Email: <a href="mailto:support@aniyume.com" className="hover:underline hover:text-gray-200 transition-colors duration-300">support@aniyume.com</a>
           </p>
         </div>
-
       </div>
 
       <div className="border-t border-white/40 mt-10 pt-8 text-center text-sm relative z-10">
         &copy; {new Date().getFullYear()} Aniyume. Все права защищены.
       </div>
 
-      
-      <div className="absolute -top-1/4 right-0 w-1/3 h-1/3 bg-white/35 rounded-full mix-blend-overlay animate-float-alt-delay"></div>
-      <div className="absolute bottom-1/2 right-1/4 w-1/5 h-1/4 bg-white/20 rounded-full mix-blend-overlay animate-float-delay-alt"></div>
-
-      <style jsx>{`
-        @keyframes float {
-          0% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(-10%, -10%) scale(1.05); }
-          100% { transform: translate(0, 0) scale(1); }
-        }
-        @keyframes float-delay {
-          0% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(10%, 10%) scale(1.03); }
-          100% { transform: translate(0, 0) scale(1); }
-        }
-        @keyframes float-alt {
-          0% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(-5%, 5%) scale(1.07); }
-          100% { transform: translate(0, 0) scale(1); }
-        }
-        @keyframes float-alt-delay { 
-          0% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(5%, -10%) scale(1.06); }
-          100% { transform: translate(0, 0) scale(1); }
-        }
-        @keyframes float-delay-alt { 
-          0% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(-5%, 10%) scale(1.04); }
-          100% { transform: translate(0, 0) scale(1); }
-        }
-        .animate-float { animation: float 15s ease-in-out infinite; }
-        .animate-float-delay { animation: float-delay 18s ease-in-out infinite; }
-        .animate-float-alt { animation: float-alt 12s ease-in-out infinite; }
-        .animate-float-alt-delay { animation: float-alt-delay 16s ease-in-out infinite; }
-        .animate-float-delay-alt { animation: float-delay-alt 13s ease-in-out infinite; }
-      `}</style>
+   
     </footer>
   );
 }
