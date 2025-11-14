@@ -1,14 +1,13 @@
 'use client';
 
 import Slider from "react-slick";
-import Image from "next/image";
 import { useState } from "react";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
 const animeList = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
-  src: `/images/anime.png`, 
+  src: `/images/anime.jpg`, 
   alt: `Аниме ${i + 1}`
 }));
 
@@ -50,7 +49,7 @@ export default function AnimeCarousel() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#008E7A] via-[#00C9B0] to-[#008E7A] py-4 rounded-lg mt-8 max-w-7xl mx-auto px-7">
+    <div className="bg-[#21D0B8] py-4 rounded-lg mt-8 max-w-350 mx-auto px-7 ">
       <div className="relative mx-auto">
         <Slider {...settings}>
           {animeList.map((anime, index) => {
@@ -79,7 +78,7 @@ export default function AnimeCarousel() {
                     alt={anime.alt}
                     width={360}
                     height={440}
-                    className="w-full h-full object-cover rounded-lg" 
+                    className="w-full h-full object-cover rounded-lg border-4 border-white" 
                   />
                   <div className="anime-card-overlay">
                     <p className="anime-card-title">
