@@ -17,7 +17,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-[#008E7A] via-[#00C9B0] to-[#008E7A] text-white py-10 mt-10 shadow-[0_0_60px_#00E2C4]/90 relative overflow-hidden">
+    <footer className="bg-[#21D0B8] text-white py-10 mt-10 relative overflow-hidden">
       <div className="absolute inset-0 z-0 opacity-20">
       </div>
 
@@ -29,7 +29,7 @@ export default function Footer() {
               alt="Aniyume Logo"
               width={500}
               height={400}
-              className="h-auto w-auto mb-4 drop-shadow-lg animate-pulse"
+              className="h-auto w-auto mb-4 drop-shadow-lg"
             />
           </Link>
           <p className="text-xl mb-4 font-light leading-relaxed">

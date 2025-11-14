@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   text-center
   my-1         
 
-  bg-gradient-to-br
+  bg-linear-to-br
   from-[#000000]
   via-[#3b3a3a]
   to-[#000000]    

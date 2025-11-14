@@ -6,7 +6,7 @@ import { FaHeart, FaSignInAlt, FaUserPlus, FaFilm, FaSearch, FaThList } from 're
 
 export default function Header() {
   return (
-    <header className="bg-gradient-to-r from-[#008E7A] via-[#00C9B0] to-[#008E7A] text-white p-4 shadow-md">
+    <header className="bg-[#21D0B8]  text-white p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center px-15">
         <Link href="/">
           <Image
