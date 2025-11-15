@@ -32,19 +32,19 @@ export default function Header() {
         <nav className="flex items-center space-x-6">
           <ul className="flex space-x-6 items-center">
             <li>
-              <button className="flex items-center space-x-2 hover:text-gray-200 transition-colors duration-200 focus:outline-none">
+              <button className="flex items-center space-x-2 hover:text-gray-200 transition-colors duration-200 focus:outline-none border-y border-white/40 py-2">
                 <FaThList className="text-xl" />
                 <span className="hidden md:inline">Категории</span>
               </button>
             </li>
             <li>
-              <Link href="/anime" className="flex items-center space-x-2 hover:text-gray-200 transition-colors duration-200">
+              <Link href="/anime" className="flex items-center space-x-2 hover:text-gray-200 transition-colors duration-200 border-y border-white/40 py-2">
                 <FaFilm className="text-xl" />
                 <span className="hidden md:inline">Аниме</span>
               </Link>
             </li>
             <li>
-              <Link href="/favorites" className="flex items-center space-x-2 hover:text-gray-200 transition-colors duration-200">
+              <Link href="/favorites" className="flex items-center space-x-2 hover:text-gray-200 transition-colors duration-200 border-y border-white/40 py-2">
                 <FaHeart className="text-xl" />
                 <span className="hidden md:inline">Избранное</span>
               </Link>
@@ -52,11 +52,11 @@ export default function Header() {
           </ul>
 
           <div className="flex items-center space-x-4 ml-6 pl-6 border-l border-white/30">
-            <Link href="/login" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:text-gray-200 transition-colors duration-200">
+            <Link href="/login" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:text-gray-200 transition-colors duration-200 border-y border-white/40 py-2">
               <FaSignInAlt className="text-xl" />
               <span className="hidden md:inline">Вход</span>
             </Link>
-            <Link href="/register" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:text-gray-200 transition-colors duration-200">
+            <Link href="/register" className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:text-gray-200 transition-colors duration-200 border-y border-white/40 py-2">
               <FaUserPlus className="text-xl" />
               <span className="hidden md:inline">Регистрация</span>
             </Link>
