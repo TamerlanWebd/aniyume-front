@@ -1,96 +1,165 @@
 'use client';
 
-import Slider from "react-slick";
-import { useState } from "react";
+import Slider, { Settings } from "react-slick";
+import { useState, CSSProperties, MouseEventHandler } from "react";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
-const animeList = Array.from({ length: 10 }, (_, i) => ({
+interface AnimeItem {
+  id: number;
+  src: string;
+  alt: string;
+}
+
+const animeList: AnimeItem[] = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
   src: `/images/anime.jpg`, 
   alt: `Аниме ${i + 1}`
 }));
 
-export default function AnimeCarousel() {
-  const [current, setCurrent] = useState(0);
+interface ArrowProps {
+  className?: string;
+  style?: CSSProperties;
+  onClick?: MouseEventHandler<HTMLDivElement>;
+}
 
-  const settings = {
-    infinite: true,
-    speed: 500,
-    slidesToShow: 6, 
-    slidesToScroll: 1,
+function PrevArrow({ onClick }: ArrowProps) {
+  return (
+    <div 
+      className="absolute left-[-60px] top-1/2 -translate-y-1/2 cursor-pointer z-20 hover:scale-125 transition-transform"
+      onClick={onClick}
+    >
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </div>
+  );
+}
+
+function NextArrow({ onClick }: ArrowProps) {
+  return (
+    <div 
+      className="absolute right-[-60px] top-1/2 -translate-y-1/2 cursor-pointer z-20 hover:scale-125 transition-transform"
+      onClick={onClick}
+    >
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </div>
+  );
+}
+
+export default function AnimeCarousel() {
+  const [current, setCurrent] = useState<number>(0);
+
+  const settings: Settings = {
+    className: "center",
     centerMode: true,
+    infinite: true,
     centerPadding: "0px",
-    beforeChange: (_: number, next: number) => setCurrent(next),
-    arrows: true, 
+    slidesToShow: 5,
+    speed: 800,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    pauseOnHover: false,
+    cssEase: "ease-out",
+    focusOnSelect: true,
+    beforeChange: (oldIndex: number, newIndex: number) => setCurrent(newIndex),
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 5,
-          slidesToScroll: 1,
-        }
-      },
-      {
-        breakpoint: 600,
-        settings: {
           slidesToShow: 3,
-          slidesToScroll: 1,
         }
       },
       {
-        breakpoint: 480,
+        breakpoint: 640,
         settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1
+          slidesToShow: 1,
         }
       }
     ]
   };
 
-  return (
-    <div className="bg-[#21D0B8] py-4 rounded-lg mt-8 max-w-350 mx-auto px-7 ">
-      <div className="relative mx-auto">
-        <Slider {...settings}>
-          {animeList.map((anime, index) => {
-            const isActive = index === current;
-            const scale = isActive ? 1.1 : 1; 
-            const opacity = isActive ? 1 : 0.8; 
-            const boxShadow = isActive ? '0 0 15px rgba(0, 201, 176, 0.7)' : 'none'; 
+  const getSlideStyles = (index: number): CSSProperties => {
+    const totalItems = animeList.length;
+    
+    let distance = Math.abs(current - index);
+    if (distance > totalItems / 2) {
+      distance = totalItems - distance;
+    }
 
-            return (
+    const leftNeighborIndex = (current - 1 + totalItems) % totalItems;
+    const rightNeighborIndex = (current + 1) % totalItems;
+
+    let scale = 1;
+    let opacity = 1;
+    let zIndex = 1;
+    let filter = 'none';
+    let xOffset = 0;
+
+    if (distance === 0) {
+      scale = 1.3; 
+      zIndex = 10;
+      opacity = 1;
+      filter = 'brightness(1.1)';
+      xOffset = 0;
+    } else if (index === leftNeighborIndex) {
+      scale = 0.95;
+      zIndex = 5;
+      opacity = 1;
+      xOffset = -50;
+    } else if (index === rightNeighborIndex) {
+      scale = 0.95;
+      zIndex = 5;
+      opacity = 1;
+      xOffset = 50;
+    } else {
+      scale = 0.65; 
+      zIndex = 1;
+      opacity = 0.6; 
+      xOffset = 0;
+    }
+
+    return {
+      transform: `translateX(${xOffset}px) scale(${scale})`,
+      opacity: opacity,
+      zIndex: zIndex,
+      filter: filter,
+      transition: 'all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)', 
+    };
+  };
+
+  return (
+    <div className="w-full max-w-[1400px] mx-auto mt-24 px-16">
+      <Slider {...settings}>
+        {animeList.map((anime, index) => {
+          const styles = getSlideStyles(index);
+          
+          return (
+            <div key={anime.id} className="py-16 px-2 outline-none">
               <div 
-                key={anime.id} 
-                className="px-2 cursor-pointer focus:outline-none"
-                style={{ 
-                  transform: `scale(${scale})`, 
-                  transition: 'all 0.3s ease-in-out', 
-                  opacity,
-                  boxShadow
+                className="mx-auto bg-white rounded-2xl overflow-hidden shadow-2xl relative"
+                style={{
+                    ...styles,
+                    width: '100%',
+                    maxWidth: '300px',
+                    aspectRatio: '3/4',
                 }}
               >
-                <div 
-                  className="anime-card-item"
-                  style={{ boxShadow }}
-                >
-                  <img
-                    src={'/images/anime.jpg'} 
-                    alt={anime.alt}
-                    width={360}
-                    height={440}
-                    className="w-full h-full object-cover rounded-lg border-4 border-white" 
-                  />
-                  <div className="anime-card-overlay">
-                    <p className="anime-card-title">
-                      {anime.alt}
-                    </p>
-                  </div>
-                </div>
+                <img
+                  src={anime.src}
+                  alt={anime.alt}
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                />
               </div>
-            );
-          })}
-        </Slider>
-      </div>
+            </div>
+          );
+        })}
+      </Slider>
     </div>
   );
 }

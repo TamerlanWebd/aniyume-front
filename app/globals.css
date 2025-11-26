@@ -28,7 +28,7 @@ body {
 }
 
 body {
-   background-image: linear-gradient(rgba(95, 194, 168, 0.584), rgba(203, 203, 203, 0.836)), url('/images/fon.jpg');
+   background-image: linear-gradient(rgb(255, 255, 255), rgb(203, 203, 203)), url('/images/fon.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -77,4 +77,13 @@ body {
 ::-webkit-scrollbar {
   width: 0px; 
   background: transparent; 
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.15s ease-out;
 }

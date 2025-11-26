@@ -6,18 +6,20 @@ import {
   FaInstagram,
   FaYoutube,
   FaDiscord,
-  FaPlayCircle,
-  FaTags,
-  FaNewspaper,
+  FaFire,
+  FaBookmark,
   FaInfoCircle,
   FaShieldAlt,
   FaBalanceScale,
   FaQuestionCircle
 } from 'react-icons/fa';
+import { HiAdjustmentsHorizontal } from "react-icons/hi2";
+import { IoCalendarNumberSharp } from "react-icons/io5";
+
 
 export default function Footer() {
   return (
-    <footer className="bg-[#21D0B8] text-white py-10 mt-10 relative overflow-hidden">
+    <footer className="bg-[#2EC4B6] text-white py-10 mt-10 relative overflow-hidden">
       <div className="absolute inset-0 z-0 opacity-20">
       </div>
 
@@ -32,7 +34,7 @@ export default function Footer() {
               className="h-auto w-auto mb-4 drop-shadow-lg"
             />
           </Link>
-          <p className="text-xl mb-4 font-light leading-relaxed">
+          <p className="text-xl mb-4 leading-relaxed font-bold">
             Ваш лучший источник для просмотра аниме онлайн. Откройте для себя что-то новое!
           </p>
         </div>
@@ -40,9 +42,10 @@ export default function Footer() {
         <div>
           <h3 className="text-xl font-bold mb-4 border-b-2 border-white/50 pb-2">Навигация</h3>
           <ul className="space-y-3">
-            <li><Link href="/anime" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaPlayCircle /> Аниме</Link></li>
-            <li><Link href="/genres" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaTags /> Жанры</Link></li>
-            <li><Link href="/news" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaNewspaper /> Новости</Link></li>
+            <li><Link href="/" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaFire/>Популярное</Link></li>
+            <li><Link href="/" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><IoCalendarNumberSharp />Расписание</Link></li>
+            <li><Link href="/" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><HiAdjustmentsHorizontal />Фильтр</Link></li>
+             <li><Link href="/" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaBookmark />Закладки</Link></li>
           </ul>
         </div>
 

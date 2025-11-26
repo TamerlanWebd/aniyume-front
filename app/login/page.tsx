@@ -11,7 +11,10 @@ const LoginPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center text-white px-4">
+    <div
+      className="min-h-screen flex items-center justify-center text-white bg-cover bg-center"
+      style={{ backgroundImage: "url('/images/fon.jpg')" }}
+    >
       <div className="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md border border-[#2EC4B6]/40 backdrop-blur-sm">
         <h1 className="text-4xl font-extrabold mb-4 text-center text-[#2EC4B6] flex items-center justify-center gap-2">
           <FaSignInAlt className="text-[#2EC4B6]" /> Вход
