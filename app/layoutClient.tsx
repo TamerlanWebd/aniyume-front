@@ -19,10 +19,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
 
       {!hideLayout && !hideCarousel && (
         <>
-          <h1 className="md:text-8xl font-extrabold text-center my-1 bg-linear-to-br from-[#000000] via-[#3b3a3a] to-[#000000] bg-clip-text text-transparent">
-            Новинки!
-          </h1>
-          <AnimeCarousel />
+         
         </>
       )}
 

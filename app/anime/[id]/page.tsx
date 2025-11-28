@@ -127,7 +127,7 @@ export default function AnimeViewPage() {
               </ul>
 
               <div className="flex items-center gap-1 ml-2">
-                {[...Array(4)].map((_, i) => <FaStar key={i} className="text-teal-500 text-sm hover:text-teal-700 transition-colors " />)}
+                {[...Array(4)].map((_, i) => <FaStar key={i} className="text-amber-400 text-sm hover:text-amber-600 transition-colors " />)}
                 <FaStar className="text-gray-700 text-sm" />
                 <span className="ml-1 text-gray-800 font-semibold">Средний рейтинг: {anime.rating} ({anime.votes})</span>
               </div>
