@@ -2,38 +2,52 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { FaCalendarAlt, FaFilm, FaBuilding, FaListUl, FaStar, FaHeadphones, FaUserCircle, FaPaperPlane, FaEdit, FaHome, FaStar as FaStarOutline } from 'react-icons/fa';
-import { MdOutlinePlaylistPlay } from 'react-icons/md';
-import { FaBold, FaItalic, FaUnderline, FaQuoteRight, FaListUl as FaListUlIcon, FaSmile, } from 'react-icons/fa';
-import SeriesDropdown from '@/components/SeriesDropdown'; // Убедитесь, что путь верный
-import { MdOutlineCalendarToday } from "react-icons/md";
-import { AiFillStar } from "react-icons/ai";
-import { GiFactory } from "react-icons/gi";
-import { BsCollectionPlay } from "react-icons/bs";
+import { 
+  FaPlay, 
+  FaBookmark, 
+  FaPlus, 
+  FaShareAlt, 
+  FaStar, 
+  FaUserCircle, 
+  FaPaperPlane, 
+  FaBold, 
+  FaItalic, 
+  FaUnderline, 
+  FaQuoteRight, 
+  FaListUl, 
+  FaSmile 
+} from 'react-icons/fa';
+import SeriesDropdown from '@/components/SeriesDropdown';
+
+interface Episode {
+  num: number;
+  title: string;
+  videoUrl: string;
+}
 
 const animeData = {
-  id: 'kikaijikake-no-marie',
-  title: 'МЕХАНИЧЕСКАЯ МАРИ',
-  englishTitle: 'KIKAIJIKAKE NO MARIE',
-  year: '2025',
-  season: 'Осень',
-  studio: 'Zero-G',
-  episodes: '6 из 12',
-  genre: 'Романтика, Сёдзё, Комедия',
-  voiceActing: 'Dreamy Sleep, EnoRu, Gecep, Inferno_Phantom',
-  description: 'Это история о механической девушке по имени Мари и её приключениях в мире, полном загадок и чувств.',
-  cover: '/images/anime.jpg',
+  id: 'my-hero-academia',
+  title: 'Моя геройская академия',
+  originalTitle: 'Boku no Hero Academia',
+  ageRating: '14+',
+  tags: ['Суб. | дуб.', 'Экшен', 'Фэнтези', 'Сёнен'],
+  rating: '4.7',
+  votes: '354K',
+  description: '«Моя геройская академия» (Boku no Hero Academia) — популярный аниме-сериал о ярком мире супергероев, где сочетаются экшн, искренние истории и личностный рост молодых людей. Сюжет посвящен Изуку Мидория, мальчику, родившемуся без суперсилы («квирка») в мире, где 80% населения обладает такими способностями. Тем не менее, Изуку мечтает стать героем.',
+  audio: 'Japanese, Русский, English, Deutsch, Español (América Latina), Español (España), Français, Italiano, Português (Brasil)',
+  subtitles: 'Русский, English, Deutsch, Español (América Latina), Español (España), Français, Italiano, Português (Brasil), العربية',
+  cover: 'https://media.2x2tv.ru/content/images/2024/07/ae9572cc-8c47-4532-b7dc-0ea9bef0a135.webp', 
   episodesList: [
-    { num: 1, title: 'Первая серия', videoUrl: 'https://player.dreamerscast.com/embed/3def7ecd-1a2d-46b2-a0d2-74a1d8e0e071' },
-    { num: 2, title: 'Вторая серия', videoUrl: 'https://player.dreamerscast.com/embed/3def7ecd-1a2d-46b2-a0d2-74a1d8e0e071' },
-    { num: 3, title: 'Третья серия', videoUrl: 'https://player.dreamerscast.com/embed/3def7ecd-1a2d-46b2-a0d2-74a1d8e0e071' },
+    { num: 1, title: 'Серия 1', videoUrl: 'https://www.youtube.com/embed/D9iTQRB4XRk?si=xyz' }, 
+    { num: 2, title: 'Серия 2', videoUrl: 'https://www.youtube.com/embed/D9iTQRB4XRk?si=xyz' },
+    { num: 3, title: 'Серия 3', videoUrl: 'https://www.youtube.com/embed/D9iTQRB4XRk?si=xyz' },
   ],
 };
 
 export default function AnimeViewPage() {
   const { id } = useParams();
   const [anime, setAnime] = useState<any>(null);
-  const [currentEpisode, setCurrentEpisode] = useState<any>(animeData.episodesList[0]);
+ const [currentEpisode, setCurrentEpisode] = useState<Episode>(animeData.episodesList[0]);
   const [comments, setComments] = useState<Array<{ name: string, text: string }>>([]);
   const [newCommentName, setNewCommentName] = useState('');
   const [newCommentText, setNewCommentText] = useState('');
@@ -41,8 +55,7 @@ export default function AnimeViewPage() {
   const [captchaText, setCaptchaText] = useState('');
 
   useEffect(() => {
-    // В реальном приложении здесь был бы fetch по id
-    if (id || !id) setAnime(animeData); // !id добавлено для теста, если нет параметров
+    setAnime(animeData);
     generateCaptcha();
   }, [id]);
 
@@ -66,7 +79,6 @@ export default function AnimeViewPage() {
       setCaptchaInput('');
       return;
     }
-
     setComments([...comments, { name: newCommentName, text: newCommentText }]);
     setNewCommentName('');
     setNewCommentText('');
@@ -75,180 +87,230 @@ export default function AnimeViewPage() {
   };
 
   if (!anime) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-800 text-xl">
-        Загрузка...
-      </div>
-    );
+    return <div className="min-h-screen bg-white text-black flex items-center justify-center">Загрузка...</div>;
   }
 
   return (
-    <div className="min-h-screen text-gray-900 font-sans rounded-md bg-gray-50">
-      <main className="container mx-auto p-3 grid grid-cols-1 md:grid-cols-5 gap-6">
-        
-    
+    <div className="min-h-screen bg-white text-black font-sans overflow-x-hidden">
+      <div className="relative w-full min-h-[85vh] md:min-h-[60vh] flex items-center">
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <img
+            src={anime.cover}
+            alt={anime.title}
+            className="w-full h-full object-cover object-top scale-105"
+          />
+          <div className="absolute inset-0 bg-linear-to-r from-white via-white/60 to-transparent"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-white via-transparent to-transparent"></div>
+          <div className="absolute top-0 right-0 w-[55%] h-full bg-teal-200/20 blur-[120px] opacity-70"></div>
+        </div>
 
-      
-        <div className="md:col-span-4">
-          
-   
-          <div className="bg-white rounded-md p-6 shadow-md border-4 border-[#2EC4B6]">
-            
-            <div className="flex flex-col md:flex-row gap-6 mb-8">
-              <img
-                src={anime.cover}
-                alt={anime.title}
-                className="w-full md:w-72 h-auto object-cover rounded-md border border-gray-300 shadow-lg self-start"
-              />
+        <div className="container mx-auto px-4 md:px-12 relative z-20 pt-20">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg tracking-wide">
+              {anime.title}
+            </h1>
 
-              <div className="grow">
-                <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-4 md:gap-0">
-                  <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 hover:text-[#2EC4B6] transition-colors">
-                    {anime.title}
-                  </h1>
+            <div className="flex flex-wrap items-center gap-4 text-sm md:text-base font-medium text-gray-700 mb-6">
+              <span className="bg-gray-200 text-black px-2 py-0.5 rounded border border-gray-900">
+                {anime.ageRating}
+              </span>
+              
+              <ul className="flex items-center gap-2 list-none">
+                {anime.tags.map((tag: string, i: number) => (
+                  <li key={i} className="flex items-center">
+                    {i > 0 && <span className="mr-2 text-gray-900">•</span>}
+                    <a href="#" className="hover:underline hover:text-black transition-colors">
+                      {tag}
+                    </a>
+                  </li>
+                ))}
+              </ul>
 
-                  <div className="flex flex-wrap gap-4 md:gap-6 text-gray-600">
-                    <div className="flex items-center gap-2 hover:text-[#0fe7d1] transition">
-                      <MdOutlineCalendarToday className="text-xl md:text-2xl" />
-                      <span className="text-sm md:text-base">{anime.year}</span>
-                    </div>
-                    <div className="flex items-center gap-2 hover:text-[#FFD700] transition">
-                      <AiFillStar className="text-xl md:text-2xl" />
-                      <span className="text-sm md:text-base">{anime.rating || "8.9"}</span>
-                    </div>
-                    <div className="flex items-center gap-2 hover:text-[#14e1cd] transition">
-                      <BsCollectionPlay className="text-xl md:text-2xl" />
-                      <span className="text-sm md:text-base">{anime.episodes} эп.</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <p className="text-lg text-gray-600 italic mb-4">{anime.englishTitle}</p>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-base text-gray-700 mb-4">
-                  <p><span className="font-semibold">Год:</span> {anime.year}</p>
-                  <p><span className="font-semibold">Эпизодов:</span> {anime.episodes}</p>
-                  <p><span className="font-semibold">Сезон:</span> {anime.season}</p>
-                  <p><span className="font-semibold">Студия:</span> {anime.studio}</p>
-                  <p className="col-span-full"><span className="font-semibold">Жанр:</span> {anime.genre}</p>
-                  <p className="col-span-full"><span className="font-semibold">Озвучивание:</span> {anime.voiceActing}</p>
-                </div>
-                <p className="text-gray-700 leading-relaxed">{anime.description}</p>
+              <div className="flex items-center gap-1 ml-2">
+                {[...Array(4)].map((_, i) => <FaStar key={i} className="text-teal-500 text-sm hover:text-teal-700 transition-colors " />)}
+                <FaStar className="text-gray-700 text-sm" />
+                <span className="ml-1 text-gray-800 font-semibold">Средний рейтинг: {anime.rating} ({anime.votes})</span>
               </div>
             </div>
 
-            <hr className="border-t-2 border-gray-100 my-8" />
+            <div className="flex items-center gap-4 mb-8">
+              <button className="bg-teal-400 hover:bg-teal-400 text-black text-lg font-bold py-3 px-8 rounded flex items-center gap-3 transition transform hover:scale-105">
+                <FaPlay className="text-sm" /> СМОТРЕТЬ 
+              </button>
+              
+              <div className="flex gap-3">
+                <button className="w-12 h-12 flex items-center justify-center border-2 border-gray-400 rounded text-gray-700 hover:border-black hover:text-black transition bg-white/30 backdrop-blur-sm">
+                  <FaBookmark />
+                </button>
+                <button className="w-12 h-12 flex items-center justify-center border-2 border-gray-400 rounded text-gray-700 hover:border-black hover:text-black transition bg-white/30 backdrop-blur-sm">
+                  <FaPlus />
+                </button>
+                <button className="w-12 h-12 flex items-center justify-center border-2 border-gray-400 rounded text-gray-700 hover:border-black hover:text-black transition bg-white/30 backdrop-blur-sm">
+                  <FaShareAlt />
+                </button>
+              </div>
+            </div>
 
-            <div className="mb-8">
-              <div className="mb-4">
-                 <SeriesDropdown onSelect={(ep) => console.log("Выбрана серия:", ep)} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-sm md:text-[15px] leading-relaxed">
+              <div>
+                <p className="mb-4 text-black drop-shadow-md">
+                  {anime.description}
+                </p>
+                <button className="text-teal-400 font-bold hover:underline">
+                  РАЗВЕРНУТЬ
+                </button>
               </div>
               
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg border border-gray-200 bg-black">
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full"
-                  src={currentEpisode.videoUrl}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title={`Серия ${currentEpisode.num}`}>
-                </iframe>
-              </div>
-            </div>
-
-            <hr className="border-t-2 border-gray-100 my-8" />
-
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4 text-[#2EC4B6]">
-                Оставить комментарий
-              </h2>
-              <p className="text-sm text-gray-500 mb-4">Минимальная длина комментария - 10 знаков. Комментарии модерируются.</p>
-
-              <div className="mb-4">
-                <input
-                  type="text"
-                  className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#2EC4B6] transition bg-gray-50"
-                  placeholder="Ваше имя"
-                  value={newCommentName}
-                  onChange={(e) => setNewCommentName(e.target.value)}
-                />
-              </div>
-
-              <div className="border border-gray-300 rounded-lg overflow-hidden mb-4 shadow-sm">
-                <div className="flex bg-gray-100 p-2 border-b border-gray-300 gap-1">
-                  <button className="p-2 hover:bg-gray-200 rounded text-gray-600"><FaBold /></button>
-                  <button className="p-2 hover:bg-gray-200 rounded text-gray-600"><FaItalic /></button>
-                  <button className="p-2 hover:bg-gray-200 rounded text-gray-600"><FaUnderline /></button>
-                  <button className="p-2 hover:bg-gray-200 rounded text-gray-600"><FaSmile /></button>
-                  <button className="p-2 hover:bg-gray-200 rounded text-gray-600"><FaQuoteRight /></button>
-                  <button className="p-2 hover:bg-gray-200 rounded text-gray-600"><FaListUlIcon /></button>
-                </div>
-                <textarea
-                  className="w-full p-3 h-32 resize-y focus:outline-none bg-white"
-                  placeholder="Написать комментарий..."
-                  value={newCommentText}
-                  onChange={(e) => setNewCommentText(e.target.value)}
-                ></textarea>
-              </div>
-
-              <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
-                <input
-                  type="text"
-                  className="grow p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#2EC4B6] transition bg-gray-50"
-                  placeholder="Впишите код с картинки"
-                  value={captchaInput}
-                  onChange={(e) => setCaptchaInput(e.target.value)}
-                />
-                <div
-                  className="bg-gray-200 rounded-lg flex items-center justify-center text-xl font-bold italic text-gray-700 select-none shadow-inner"
-                  style={{
-                    width: '120px',
-                    height: '50px',
-                    backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='50'><rect width='100%' height='100%' fill='%23e0e0e0'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='cursive' font-size='28px' fill='%234a4a4a' transform='rotate(${Math.random() * 20 - 10}, 60, 25)'><tspan letter-spacing='2'>${captchaText.split('').join(' ')}</tspan></text></svg>")`,
-                  }}
-                >
-                </div>
-              </div>
-
-              <button
-                className="bg-[#2EC4B6] text-white px-8 py-3 rounded-lg hover:bg-[#259f93] transition text-lg font-semibold w-full md:w-auto shadow-md"
-                onClick={handleCommentSubmit}>
-                Отправить
-              </button>
-            </div>
-
-            <hr className="border-t-2 border-gray-100 my-8" />
-
-            <div>
-              <h2 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
-                <FaUserCircle className="text-[#2EC4B6]" /> Комментарии ({comments.length})
-              </h2>
-
-              <div className="flex flex-col gap-4">
-                {comments.length === 0 && (
-                  <p className="text-gray-500 italic text-center py-4 bg-gray-50 rounded-lg">Пока нет комментариев. Будьте первым!</p>
-                )}
-                {comments.map((c, idx) => (
-                  <div key={idx} className="flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition border-l-4 border-[#2EC4B6]">
-                    <FaUserCircle className="text-[#2EC4B6] w-10 h-10 shrink-0 mt-1" />
-                    <div className="grow">
-                      <div className="flex justify-between items-center mb-1">
-                        <p className="font-bold text-gray-800">{c.name}</p>
-                        <span className="text-xs text-gray-400">Только что</span>
-                      </div>
-                      <p className="text-gray-700 whitespace-pre-wrap">{c.text}</p>
-                      <button className="mt-2 flex items-center gap-1 text-[#2EC4B6] hover:text-teal-700 text-sm transition font-medium">
-                        <FaPaperPlane className="text-xs" /> Ответить
-                      </button>
-                    </div>
-                  </div>
-                ))}
+              <div className="text-gray-800 text-xs md:text-sm space-y-3 font-medium">
+                <p>
+                  <span className="text-gray-800 font-semibold">Аудио:</span> {anime.audio}
+                </p>
+                <p>
+                  <span className="text-gray-800 font-semibold">Субтитры:</span> {anime.subtitles}
+                </p>
               </div>
             </div>
 
           </div>
         </div>
-      </main>
+      </div>
+
+      <div className="container mx-auto px-4 md:px-12 py-10">
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold text-black">Плеер</h2>
+            <div className="w-64">
+            <SeriesDropdown
+               series={anime.episodesList.map((ep: Episode) => ep.title)} 
+               onSelect={(title: string) => {
+               const ep: Episode | undefined = anime.episodesList.find((e: Episode) => e.title === title); 
+                 if (ep) setCurrentEpisode(ep);
+              }}
+              />
+            </div>
+          </div>
+          
+          <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl border border-gray-300 bg-white">
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src={currentEpisode.videoUrl}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title={`Серия ${currentEpisode.num}`}>
+            </iframe>
+          </div>
+        </div>
+
+        <hr className="border-gray-300 mb-10" />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2">
+             <h2 className="text-xl font-semibold mb-6 text-black border-l-4 border-teal-400 pl-3">
+                Оставить комментарий
+              </h2>
+              
+              <div className="bg-gray-100 p-6 rounded-xl shadow-lg border border-gray-300">
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    className="w-full p-3 rounded bg-white border border-gray-400 text-black placeholder-gray-500 focus:outline-none focus:border-teal-400 transition"
+                    placeholder="Ваше имя"
+                    value={newCommentName}
+                    onChange={(e) => setNewCommentName(e.target.value)}
+                  />
+                </div>
+
+                <div className="border border-gray-400 rounded overflow-hidden mb-4">
+                  <div className="flex bg-white p-2 border-b border-gray-400 gap-1">
+                    {[FaBold, FaItalic, FaUnderline, FaSmile, FaQuoteRight, FaListUl].map((Icon, idx) => (
+                      <button key={idx} className="p-2 hover:bg-gray-200 rounded text-gray-700 transition">
+                        <Icon />
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    className="w-full p-3 h-32 resize-y bg-white text-black placeholder-gray-500 focus:outline-none"
+                    placeholder="Написать комментарий..."
+                    value={newCommentText}
+                    onChange={(e) => setNewCommentText(e.target.value)}
+                  ></textarea>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
+                  <input
+                    type="text"
+                    className="grow w-full p-3 rounded bg-white border border-gray-400 text-black focus:outline-none focus:border-teal-400"
+                    placeholder="Код с картинки"
+                    value={captchaInput}
+                    onChange={(e) => setCaptchaInput(e.target.value)}
+                  />
+                  <div
+                    className="bg-gray-300 rounded flex items-center justify-center select-none shrink-0"
+                    style={{
+                      width: '120px',
+                      height: '50px',
+                      backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='50'><rect width='100%' height='100%' fill='%23e0e0e0'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='cursive' font-size='28px' fill='%234a4a4a' transform='rotate(${Math.random() * 10 - 5}, 60, 25)'>${captchaText}</text></svg>")`,
+                    }}
+                  >
+                  </div>
+                </div>
+
+                <button
+                  className="w-full bg-teal-400 hover:bg-teal-400 text-white font-bold py-3 rounded transition shadow-lg hover:shadow-orange-500/20"
+                  onClick={handleCommentSubmit}>
+                  Отправить
+                </button>
+              </div>
+
+              <div className="mt-10">
+                <h3 className="text-lg font-bold mb-4 text-gray-700">
+                   Комментарии ({comments.length})
+                </h3>
+                <div className="space-y-4">
+                  {comments.length === 0 && (
+                    <p className="text-gray-500 italic">Пока нет комментариев.</p>
+                  )}
+                  {comments.map((c, idx) => (
+                    <div key={idx} className="flex gap-4 p-4 bg-gray-100 rounded-xl border border-gray-300">
+                      <FaUserCircle className="text-teal-400 w-10 h-10 shrink-0" />
+                      <div>
+                        <div className="flex items-baseline gap-2 mb-1">
+                          <p className="font-bold text-black">{c.name}</p>
+                          <span className="text-xs text-gray-500">Только что</span>
+                        </div>
+                        <p className="text-gray-700">{c.text}</p>
+                        <button className="mt-2 flex items-center gap-1 text-teal-400 text-xs hover:underline">
+                          <FaPaperPlane /> Ответить
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+          </div>
+
+          <div className="hidden lg:block">
+            <div className="bg-gray-100 p-5 rounded-xl border border-gray-300 sticky top-4">
+              <h3 className="text-lg font-bold text-black mb-4">Похожие</h3>
+              <div className="space-y-4">
+                  {[1, 2, 3].map((item) => (
+                    <div key={item} className="flex gap-3 hover:bg-gray-200 p-2 rounded transition cursor-pointer group">
+                      <div className="w-16 h-24 bg-gray-300 rounded overflow-hidden">
+                         <img src={`https://via.placeholder.com/100x150?text=Anime+${item}`} alt="Poster" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-sm text-gray-800 group-hover:text-teal-400 transition">Случайное аниме {item}</h4>
+                        <p className="text-xs text-gray-500 mt-1">2024 • Экшен</p>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }

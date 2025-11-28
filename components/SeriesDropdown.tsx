@@ -2,16 +2,14 @@
 import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 
-// Пропсы компонента
 interface SeriesDropdownProps {
+  series: string[];
   onSelect?: (item: string) => void;
 }
 
-export default function SeriesDropdown({ onSelect }: SeriesDropdownProps) {
+export default function SeriesDropdown({ series, onSelect }: SeriesDropdownProps) {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("Выберите серию");
-
-  const series: string[] = ["Серия 1", "Серия 2", "Серия 3", "Серия 4", "Серия 5"];
+  const [selected, setSelected] = useState(series[0] || "Выберите серию");
 
   const chooseSeries = (item: string) => {
     setSelected(item);

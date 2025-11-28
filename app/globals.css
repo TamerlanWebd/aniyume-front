@@ -28,7 +28,7 @@ body {
 }
 
 body {
-   background-image: linear-gradient(rgb(255, 255, 255), rgb(203, 203, 203)), url('/images/fon.jpg');
+   background-color: #ffffff;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
