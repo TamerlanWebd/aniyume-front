@@ -3,7 +3,8 @@
 import { usePathname } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import AnimeCarousel from '../components/AnimeCarousel';
+
+
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -19,7 +20,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
 
       {!hideLayout && !hideCarousel && (
         <>
-         
+        
         </>
       )}
 
