@@ -1,22 +1,21 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   images: {
     domains: [
       'picsum.photos',
-      'www.anilibria.tv', 
-      'anilibria.tv', 
+      'www.anilibria.tv',
+      'anilibria.tv',
     ],
-  },
-  async rewrites() {
-    return [
+    remotePatterns: [
       {
-        source: '/api/anilibria/:path*',
-        destination: 'https://www.anilibria.tv/api/:path*', 
+        protocol: 'https',
+        hostname: '**',
       },
-    ];
+    ],
+    unoptimized: true,
   },
+
 };
 
-module.exports = nextConfig;
-
+export default nextConfig;

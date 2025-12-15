@@ -1,82 +1,149 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
   FaInstagram,
   FaYoutube,
   FaDiscord,
-  FaFire,
-  FaBookmark,
   FaInfoCircle,
   FaShieldAlt,
   FaBalanceScale,
   FaQuestionCircle
 } from 'react-icons/fa';
-import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import { IoCalendarNumberSharp } from "react-icons/io5";
+import { FaXTwitter } from 'react-icons/fa6';
+import { HiAdjustmentsHorizontal, HiMiniBookmark, HiFire } from 'react-icons/hi2';
+import { IoCalendarNumberSharp } from 'react-icons/io5';
 
+interface FooterLinkProps {
+  href: string;
+  icon: React.ElementType;
+  children: React.ReactNode;
+}
 
 export default function Footer() {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="bg-[#2EC4B6] text-white py-10 mt-10 relative overflow-hidden">
-      <div className="absolute inset-0 z-0 opacity-20">
+    <footer className="relative overflow-hidden bg-linear-to-b from-white via-slate-50 to-slate-100 pt-28">
+      <div className="pointer-events-none absolute inset-x-0 top-0">
+      
       </div>
 
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
-        <div>
-          <Link href="/">
-            <Image
-              src="/images/oblako.png"
-              alt="Aniyume Logo"
-              width={500}
-              height={400}
-              className="h-auto w-auto mb-4 drop-shadow-lg"
-            />
-          </Link>
-          <p className="text-xl mb-4 leading-relaxed font-bold">
-            Ваш лучший источник для просмотра аниме онлайн. Откройте для себя что-то новое!
-          </p>
-        </div>
+     <div className="grid grid-cols-1 gap-14 border-t border-slate-400 pt-20 sm:grid-cols-2 lg:grid-cols-4"/>
+<div className="relative mx-auto max-w-7xl px-2">
+  <div className="flex items-center justify-between gap-12">
+    
+   
+    <div className="max-w-xl">
+      <Link href="/" className="inline-block">
+        <Image
+          src="/images/logo0.png"
+          alt="AniYume"
+          width={480}          
+          height={180}
+          className="h-30 w-auto"
+        />
+      </Link>
 
-        <div>
-          <h3 className="text-xl font-bold mb-4 border-b-2 border-white/50 pb-2">Навигация</h3>
-          <ul className="space-y-3">
-            <li><Link href="/" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaFire/>Популярное</Link></li>
-            <li><Link href="/" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><IoCalendarNumberSharp />Расписание</Link></li>
-            <li><Link href="/" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><HiAdjustmentsHorizontal />Фильтр</Link></li>
-             <li><Link href="/" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaBookmark />Закладки</Link></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-xl font-bold mb-4 border-b-2 border-white/50 pb-2">Полезное</h3>
-          <ul className="space-y-3">
-            <li><Link href="/about" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaInfoCircle /> О нас</Link></li>
-            <li><Link href="/privacy" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaShieldAlt /> Политика конфиденциальности</Link></li>
-            <li><Link href="/terms" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaBalanceScale /> Условия использования</Link></li>
-            <li><Link href="/faq" className="flex items-center gap-3 hover:text-gray-200 transition-colors duration-300 text-lg"><FaQuestionCircle /> FAQ</Link></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-xl font-bold mb-4 border-b-2 border-white/50 pb-2">Присоединяйтесь к нам</h3>
-          <div className="flex space-x-6 mb-6">
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors duration-300"><FaInstagram className="text-3xl" /></a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 transition-colors duration-300"><FaYoutube className="text-3xl" /></a>
-            <a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors duration-300"><FaDiscord className="text-3xl" /></a>
-          </div>
-          <p className="text-lg">
-            Email: <a href="mailto:support@aniyume.com" className="hover:underline hover:text-gray-200 transition-colors duration-300">support@aniyume.com</a>
-          </p>
-        </div>
-      </div>
-
-      <div className="border-t border-white/40 mt-10 pt-8 text-center text-sm relative z-10">
-        &copy; {new Date().getFullYear()} Aniyume. Все права защищены.
-      </div>
+      <p className="mt-6 text-lg leading-relaxed text-slate-700">
+        AniYume — современная платформа для просмотра аниме.
+        Новинки, расписание, коллекции и живое сообщество в одном месте.
+      </p>
+    </div>
 
    
+    <div className="relative">
+      <Image
+        src="/images/44.png"
+        alt="AniYume mascot"
+        width={900}
+        height={400}
+        className="w-[420px] h-auto"
+        priority
+      />
+    </div>
+</div>
+
+
+        <div className="grid grid-cols-1 gap-14 border-t border-slate-400 pt-20 sm:grid-cols-2 lg:grid-cols-4">
+          <Block title="Навигация">
+            <FooterLink href="/popular" icon={HiFire}>Популярное</FooterLink>
+            <FooterLink href="/schedule" icon={IoCalendarNumberSharp}>Расписание</FooterLink>
+            <FooterLink href="/filter" icon={HiAdjustmentsHorizontal}>Каталог</FooterLink>
+            <FooterLink href="/bookmarks" icon={HiMiniBookmark}>Закладки</FooterLink>
+          </Block>
+
+          <Block title="Информация">
+            <FooterLink href="/about" icon={FaInfoCircle}>О проекте</FooterLink>
+            <FooterLink href="/privacy" icon={FaShieldAlt}>Приватность</FooterLink>
+            <FooterLink href="/terms" icon={FaBalanceScale}>Условия</FooterLink>
+            <FooterLink href="/faq" icon={FaQuestionCircle}>FAQ</FooterLink>
+          </Block>
+
+          <Block title="Поддержка">
+            <p className="text-slate-600">Наша команда отвечает ежедневно</p>
+            <a
+              href="mailto:support@aniyume.com"
+              className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-6 py-4 font-semibold text-white transition hover:bg-[#2EC4B6]"
+            >
+              support@aniyume.com
+            </a>
+            <span className="mt-3 block text-sm text-slate-400">10:00 – 22:00</span>
+          </Block>
+
+          <Block title="Мы в соцсетях">
+            <div className="grid grid-cols-4 gap-3">
+              <SocialCard href="#" icon={FaDiscord} label="Discord" hoverClass="hover:bg-[#5865F2] hover:text-white" />
+              <SocialCard href="#" icon={FaInstagram} label="Instagram" hoverClass="hover:bg-gradient-to-tr from-[#FD1D1D] to-[#833AB4] hover:text-white" />
+              <SocialCard href="#" icon={FaYoutube} label="YouTube" hoverClass="hover:bg-[#FF0000] hover:text-white" />
+              <SocialCard href="#" icon={FaXTwitter} label="Twitter" hoverClass="hover:bg-black hover:text-white" />
+            </div>
+          </Block>
+        </div>
+
+        <div className="mt-20 border-t border-slate-300 py-10 text-center text-sm text-slate-400">
+          © {year} Aniyume. Все права защищены
+        </div>
+      </div>
     </footer>
+  );
+}
+
+function Block({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h3 className="mb-6 text-lg font-bold text-slate-900">
+        <span className="border-b-4 border-[#2EC4B6] pb-1">{title}</span>
+      </h3>
+      <div className="flex flex-col gap-4">{children}</div>
+    </div>
+  );
+}
+
+function FooterLink({ href, icon: Icon, children }: FooterLinkProps) {
+  return (
+    <Link
+      href={href}
+      className="group flex items-center gap-4 text-base text-slate-600 transition hover:translate-x-2 hover:text-slate-900"
+    >
+      <Icon className="text-xl text-slate-400 transition group-hover:text-[#2EC4B6]" />
+      {children}
+    </Link>
+  );
+}
+
+function SocialCard({ href, icon: Icon, label, hoverClass }: { href: string; icon: React.ElementType; label: string; hoverClass: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`group flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-xl bg-slate-100 text-slate-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${hoverClass}`}
+    >
+      <Icon className="text-2xl transition-transform duration-300 group-hover:scale-110" />
+      <span className="text-[10px] font-semibold leading-none opacity-80 group-hover:opacity-100">{label}</span>
+    </a>
   );
 }
