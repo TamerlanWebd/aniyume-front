@@ -5,6 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaChevronLeft, FaChevronRight, FaStar, FaPlay } from 'react-icons/fa';
 import AnimeCardSkeleton from '@/components/skeletons/AnimeCardSkeleton';
+import { useRef } from 'react';
+
 
 interface AnimeData {
   id: number;
@@ -96,6 +98,7 @@ interface AnimeListProps {
 }
 
 const AnimeList: React.FC<AnimeListProps> = ({ title }) => {
+  const titleRef = useRef<HTMLDivElement | null>(null);
   const [animeData, setAnimeData] = useState<AnimeData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -108,9 +111,13 @@ const AnimeList: React.FC<AnimeListProps> = ({ title }) => {
     const fetchAnime = async () => {
       try {
         setIsLoading(true);
-        if (currentPage > 1) {
-           window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+       if (currentPage > 1 && titleRef.current) {
+         titleRef.current.scrollIntoView({
+           behavior: 'smooth',
+           block: 'start',
+        });
+      }
+
 
         const res = await fetch(`${API_BASE}/anime?page=${currentPage}&sort=newest&per_page=${ITEMS_PER_PAGE}`);
         
@@ -167,12 +174,17 @@ const AnimeList: React.FC<AnimeListProps> = ({ title }) => {
   };
 
   return (
+    
     <section className="container mx-auto px-4 py-16">
-      <div className="flex flex-col items-center justify-center mb-12 relative">
-          <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight text-center">
+      <div className="border-t border-slate-400 pt-20 "></div>
+      <div
+       ref={titleRef}
+       className="flex flex-col items-center justify-center mb-12 relative">
+        
+          <h2 className="text-6xl font-extrabold text-gray-800 tracking-tight text-center">
             {title}
           </h2>
-          <div className="w-24 h-1 bg-[#21D0B8] rounded-full mt-4"></div>
+          <div className="w-64 h-1 bg-[#21D0B8] rounded-full mt-4"></div>
       </div>
 
       {isLoading ? (

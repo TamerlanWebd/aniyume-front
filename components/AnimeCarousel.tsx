@@ -4,6 +4,7 @@ import Slider, { Settings } from "react-slick";
 import { useState, useEffect, CSSProperties, MouseEventHandler } from "react";
 import Link from "next/link";
 import { FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa";
+import { MdNewReleases } from "react-icons/md";
 import CarouselSkeleton from './skeletons/CarouselSkeleton';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
@@ -26,12 +27,10 @@ interface ArrowProps {
 function PrevArrow({ onClick }: ArrowProps) {
   return (
     <div 
-      className="absolute -left-4 md:left-[-50px] top-1/2 -translate-y-1/2 cursor-pointer z-30 group"
+      className="absolute -left-4 md:left-[-60px] top-1/2 -translate-y-1/2 cursor-pointer z-30 group"
       onClick={onClick}
     >
-      <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-gray-300/30 text-gray-800 shadow-lg transition-all duration-300 group-hover:bg-[#21D0B8] group-hover:border-[#21D0B8] group-hover:text-white group-hover:scale-110">
-        <FaChevronLeft size={18} />
-      </div>
+     
     </div>
   );
 }
@@ -39,12 +38,10 @@ function PrevArrow({ onClick }: ArrowProps) {
 function NextArrow({ onClick }: ArrowProps) {
   return (
     <div 
-      className="absolute -right-4 md:right-[-50px] top-1/2 -translate-y-1/2 cursor-pointer z-30 group"
+      className="absolute -right-4 md:right-[-60px] top-1/2 -translate-y-1/2 cursor-pointer z-30 group"
       onClick={onClick}
     >
-      <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-gray-300/30 text-gray-800 shadow-lg transition-all duration-300 group-hover:bg-[#21D0B8] group-hover:border-[#21D0B8] group-hover:text-white group-hover:scale-110">
-        <FaChevronRight size={18} />
-      </div>
+     
     </div>
   );
 }
@@ -109,16 +106,16 @@ export default function AnimeCarousel() {
     if (distance === 0) { 
         scale = 1.35; 
         zIndex = 20; 
-        filter = 'brightness(1.05) contrast(1.1)'; 
+        filter = 'brightness(1.1) contrast(1.15) saturate(1.1)'; 
     }
     else if (index === leftNeighborIndex) { 
-        scale = 0.9; zIndex = 10; xOffset = -60; opacity = 0.7; filter = 'brightness(0.7) blur(1px)';
+        scale = 0.9; zIndex = 10; xOffset = -60; opacity = 0.75;
     }
     else if (index === rightNeighborIndex) { 
-        scale = 0.9; zIndex = 10; xOffset = 60; opacity = 0.7; filter = 'brightness(0.7) blur(1px)';
+        scale = 0.9; zIndex = 10; xOffset = 60; opacity = 0.75; 
     }
     else { 
-        scale = 0.6; zIndex = 1; opacity = 0.3; filter = 'brightness(0.5) blur(2px)';
+        scale = 0.6; zIndex = 1; opacity = 0.4; 
     }
 
     return {
@@ -134,12 +131,12 @@ export default function AnimeCarousel() {
   if (!animeList.length) return null;
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto mt-12 mb-24 px-4 md:px-16 overflow-visible">
-      <div className="flex flex-col items-center justify-center mb-16 relative">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 tracking-tight text-center">
-            Новинки сезона
-          </h2>
-          <div className="w-20 h-1 bg-[#21D0B8] rounded-full mt-3"></div>
+    <div className="w-full max-w-[1400px] mx-auto mb-12 px-4 md:px-16 overflow-visible">
+      <div className="flex flex-col items-center justify-center mb-8">
+        <h2 className="text-7xl md:text-6xl font-extrabold text-gray-800 tracking-tight text-center">
+          Новинки сезона <MdNewReleases className="inline-block ml-2 text-gray-800" />
+         <hr className="mt-4 w-90 mx-auto border-t border-[#21D0B8]  text-center border-4 rounded-2xl" />
+        </h2>
       </div>
 
       <Slider {...settings}>
@@ -148,12 +145,14 @@ export default function AnimeCarousel() {
           const isActive = index === current;
 
           return (
-            <div key={anime.id} className="py-20 px-2 outline-none">
+            <div key={anime.id} className="py-24 px-2 outline-none">
               <Link href={`/anime/${anime.id}`}>
                 <div 
-                  className={`mx-auto bg-gray-900 rounded-2xl overflow-hidden relative cursor-pointer group
-                    border-2 border-transparent hover:border-[#21D0B8] 
-                    transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(33,208,184,0.4)]`}
+                  className={`mx-auto bg-linear-to-br from-gray-300 to-gray-200 rounded-lg  overflow-hidden relative cursor-pointer group
+                    border text-gray-800 hover:border-[#258f81]
+                    transition-all duration-300 hover:scale-105 
+                    shadow-lg 
+                    hover:shadow-[0_0_40px_rgba(33,208,184,0.6)]/20`}
                   style={{ 
                     ...styles, 
                     width: '100%', 
@@ -161,34 +160,54 @@ export default function AnimeCarousel() {
                     aspectRatio: '2/3',
                   }}
                 >
-                  <img
-                    src={anime.poster_url || '/placeholder.jpg'}
-                    alt={anime.title}
-                    className="w-full h-full object-cover"
-                    draggable={false}
-                  />
-                  <div className={`absolute inset-0 bg-black/50 flex flex-col justify-end p-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100`}>
-                    <h3 className="text-white font-bold text-lg leading-tight line-clamp-2 mb-2">
-                        {anime.title}
+                  <div className="relative w-full h-full overflow-hidden">
+                    <img
+                      src={anime.poster_url || '/placeholder.jpg'}
+                      alt={anime.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      draggable={false}
+                    />
+                    
+                    <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-gray-950/80"></div>
+                  </div>
+
+                  <div className={`absolute inset-0 flex flex-col justify-end p-5 transition-all duration-300 
+                    ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                    
+                    <h3 className="text-white font-bold text-lg leading-tight line-clamp-3 mb-3 drop-shadow-lg">
+                      {anime.title}
                     </h3>
-                    <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
+
+                    <div className="flex flex-wrap items-end gap-2">
+                      <div className="flex flex-wrap gap-2">
                         {anime.year && (
-                            <span className="bg-gray-700 text-gray-200 px-2 py-0.5 rounded">
+                            <span className="bg-linear-to-r from-gray-700/80 to-gray-800/80 text-gray-100 px-3 py-1 rounded-lg text-xs font-semibold
+                              border border-gray-600/30 backdrop-blur-sm shadow-md">
                                 {anime.year}
                             </span>
                         )}
                         {anime.type && (
-                            <span className="bg-[#21D0B8]/20 text-[#21D0B8] px-2 py-0.5 rounded uppercase">
+                            <span className="bg-linear-to-r from-[#21D0B8]/40 to-[#21D0B8]/20 text-[#E0FFFC] px-3 py-1 rounded-lg text-xs font-bold uppercase
+                              border border-[#21D0B8]/50 backdrop-blur-sm shadow-md shadow-[#21D0B8]/30">
                                 {anime.type}
                             </span>
                         )}
-                        {anime.rating && (
-                            <div className="flex items-center gap-1 text-yellow-400 ml-auto">
-                                <FaStar /> {anime.rating}
-                            </div>
-                        )}
+                      </div>
+                      
+                      {anime.rating && (
+                          <div className="flex items-center gap-1.5 text-yellow-300 ml-auto 
+                            bg-linear-to-r from-yellow-500/20 to-orange-500/10 px-3 py-1 rounded-lg
+                            border border-yellow-400/30 backdrop-blur-sm font-bold shadow-md">
+                              <FaStar size={14} />
+                              <span className="text-sm">{anime.rating}</span>
+                          </div>
+                      )}
                     </div>
                   </div>
+
+                  <div className="absolute inset-0 bg-linear-to-tr from-[#21D0B8]/0 via-transparent to-white/0 
+                    group-hover:from-[#21D0B8]/10 group-hover:to-white/5 
+                    transition-all duration-300 pointer-events-none rounded-3xl"></div>
                 </div>
               </Link>
             </div>

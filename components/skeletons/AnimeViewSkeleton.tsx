@@ -3,6 +3,8 @@ import React from 'react';
 
 export default function AnimeViewSkeleton() {
   return (
+
+    
     <div className="min-h-screen bg-white animate-pulse overflow-x-hidden">
       <div className="relative w-full min-h-[60vh] bg-gray-100 flex items-center">
         <div className="container mx-auto px-4 md:px-12 pt-20 relative z-10">

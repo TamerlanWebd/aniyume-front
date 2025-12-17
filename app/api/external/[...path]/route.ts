@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_URL = "https://join-publicly-therapy-mem.trycloudflare.com/api/v1";
+const API_URL = "https://kong-presentations-computers-jar.trycloudflare.com/api/v1/public";
 
 export async function GET(req: NextRequest, { params }: { params: { path: string[] } }) {
   try {

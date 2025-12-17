@@ -1,5 +1,11 @@
 // types/anime.ts
 
+export interface Genre {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 export interface Episode {
   id: number;
   anime_id: number;
@@ -22,5 +28,6 @@ export interface AnimeDetails {
   year: number;
   type: string;
   status: string;
-  genres?: string[];
+  genres?: Genre[];
+  tags?: Genre[];
 }

@@ -10,7 +10,7 @@ export default function HomePage() {
       </div>
 
 
-      <div className="py-8">
+      <div className="py-0 ">
         <AnimeList title="Все Аниме" />
       </div>
     </main>

@@ -1,6 +1,6 @@
 // lib/api.ts
 
-const API_BASE = 'https://tone-traveller-toolbar-horn.trycloudflare.com/api/v1';
+const API_BASE = 'https://generations-belong-cities-consolidation.trycloudflare.com/api/v1';
 
 
 export interface Anime {

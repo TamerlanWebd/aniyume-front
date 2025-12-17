@@ -17,6 +17,76 @@ interface SearchResult {
   type?: string;
 }
 
+function calculateLevenshteinDistance(str1: string, str2: string): number {
+  const track = Array(str2.length + 1).fill(null).map(() =>
+    Array(str1.length + 1).fill(null)
+  );
+
+  for (let i = 0; i <= str1.length; i += 1) {
+    track[0][i] = i;
+  }
+  for (let j = 0; j <= str2.length; j += 1) {
+    track[j][0] = j;
+  }
+
+  for (let j = 1; j <= str2.length; j += 1) {
+    for (let i = 1; i <= str1.length; i += 1) {
+      const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+      track[j][i] = Math.min(
+        track[j][i - 1] + 1,
+        track[j - 1][i] + 1,
+        track[j - 1][i - 1] + indicator
+      );
+    }
+  }
+
+  return track[str2.length][str1.length];
+}
+
+function normalizeText(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s]/g, '');
+}
+
+function filterByFuzzyMatch(
+  results: SearchResult[],
+  query: string,
+  maxDistance: number = 2
+): SearchResult[] {
+  const normalizedQuery = normalizeText(query);
+
+  return results
+    .map((item) => {
+      const normalizedTitle = normalizeText(item.title);
+
+      if (normalizedTitle.startsWith(normalizedQuery)) {
+        return { item, distance: 0, priority: 3 };
+      }
+
+      if (normalizedTitle.includes(normalizedQuery)) {
+        return { item, distance: 0, priority: 2 };
+      }
+
+      const distance = calculateLevenshteinDistance(normalizedQuery, normalizedTitle);
+
+      if (distance <= maxDistance) {
+        return { item, distance, priority: 1 };
+      }
+
+      return null;
+    })
+    .filter((result) => result !== null)
+    .sort((a, b) => {
+      if (b!.priority !== a!.priority) {
+        return b!.priority - a!.priority;
+      }
+      return a!.distance - b!.distance;
+    })
+    .map((result) => result!.item);
+}
+
 export default function Header() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -29,7 +99,8 @@ export default function Header() {
 
   useEffect(() => {
     const cleanQuery = query.trim();
-    if (cleanQuery.length < 3) {
+
+    if (cleanQuery.length < 1) {
       setResults([]);
       setIsOpen(false);
       setIsLoading(false);
@@ -42,17 +113,20 @@ export default function Header() {
     const timer = setTimeout(async () => {
       try {
         const res = await fetch(`${API_BASE}/anime/search?q=${encodeURIComponent(cleanQuery)}`);
+
         if (res.ok) {
           const data = await res.json();
           const list = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
-          setResults(list.slice(0, 5));
+          const filteredResults = filterByFuzzyMatch(list, cleanQuery, 3);
+          setResults(filteredResults.slice(0, 8));
         }
       } catch (error) {
         console.error("Search error:", error);
+        setResults([]);
       } finally {
         setIsLoading(false);
       }
-    }, 300);
+    }, 200);
 
     return () => clearTimeout(timer);
   }, [query]);
@@ -91,13 +165,13 @@ export default function Header() {
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <FaSearch className="text-gray-400" />
             </div>
-            
+
             <input
               type="text"
               placeholder="Поиск аниме..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onFocus={() => query.trim().length >= 3 && setIsOpen(true)}
+              onFocus={() => query.trim().length >= 1 && setIsOpen(true)}
               className="block w-full rounded-xl border-none bg-gray-100 py-2.5 pl-10 pr-10 text-sm text-gray-900 transition-all duration-200 placeholder:text-gray-500 focus:bg-white focus:ring-2 focus:ring-[#39bcba] focus:outline-none shadow-sm"
             />
 
@@ -113,26 +187,26 @@ export default function Header() {
                   <ul className="max-h-[400px] overflow-y-auto custom-scrollbar">
                     {results.map((item) => (
                       <li key={item.id} className="border-b border-gray-100 last:border-0">
-                        <Link 
-                           href={`/anime/${item.id}`} 
-                           className="flex items-center gap-3 p-3 hover:bg-teal-50/80 transition-colors group"
-                           onClick={handleLinkClick}
+                        <Link
+                          href={`/anime/${item.id}`}
+                          className="flex items-center gap-3 p-3 hover:bg-teal-50/80 transition-colors group"
+                          onClick={handleLinkClick}
                         >
                           <div className="w-10 h-14 bg-gray-200 rounded shrink-0 overflow-hidden relative shadow-sm">
-                             <img 
-                               src={item.poster_url || '/placeholder.jpg'} 
-                               alt={item.title} 
-                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                             />
+                            <img
+                              src={item.poster_url || '/placeholder.jpg'}
+                              alt={item.title}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            />
                           </div>
                           <div className="flex flex-col flex-1 min-w-0">
                             <span className="font-semibold text-gray-800 text-sm truncate group-hover:text-[#39bcba] transition-colors">
-                                {item.title}
+                              {item.title}
                             </span>
                             <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
-                                {item.year && <span className="bg-gray-100 px-1.5 rounded">{item.year}</span>}
-                                {item.type && <span className="uppercase text-[10px] border border-gray-200 px-1 rounded">{item.type}</span>}
-                                {item.rating && <span className="ml-auto text-amber-500 font-bold flex items-center gap-1">★ {item.rating}</span>}
+                              {item.year && <span className="bg-gray-100 px-1.5 rounded">{item.year}</span>}
+                              {item.type && <span className="uppercase text-[10px] border border-gray-200 px-1 rounded">{item.type}</span>}
+                              {item.rating && <span className="ml-auto text-amber-500 font-bold flex items-center gap-1">★ {item.rating}</span>}
                             </div>
                           </div>
                         </Link>
@@ -140,10 +214,10 @@ export default function Header() {
                     ))}
                   </ul>
                 ) : (
-                  !isLoading && query.trim().length >= 3 && (
+                  !isLoading && query.trim().length >= 1 && (
                     <div className="p-4 text-center text-gray-500 text-sm flex flex-col items-center justify-center gap-2">
-                        <FaSadCry className="text-2xl" />
-                         По запросу "{query}" ничего не найдено
+                      <FaSadCry className="text-2xl" />
+                      По запросу "{query}" ничего не найдено
                     </div>
                   )
                 )}
@@ -155,7 +229,7 @@ export default function Header() {
         <nav className="flex items-center gap-6">
           <ul className="hidden items-center gap-6 md:flex">
             <li>
-              <Link href="/anime" className="group flex items-center gap-3 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900">
+              <Link href="/popular" className="group flex items-center gap-3 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900">
                 <HiFire className="text-2xl text-gray-400 transition-colors group-hover:text-[#39bcba]" />
                 <span>Популярное</span>
               </Link>
@@ -173,10 +247,10 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <button className="group flex items-center gap-3 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900">
+              <Link href="/bookmarks" className="group flex items-center gap-3 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900">
                 <HiMiniBookmark className="text-2xl text-gray-400 transition-colors group-hover:text-[#39bcba]" />
                 <span>Закладки</span>
-              </button>
+              </Link>
             </li>
           </ul>
 

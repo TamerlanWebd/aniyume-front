@@ -1,9 +1,8 @@
-// components/AnimeHero.tsx
 'use client';
 
 import React from 'react';
 import { FaPlay, FaStar, FaBookmark, FaPlus, FaShareAlt } from 'react-icons/fa';
-import { AnimeDetails, Episode } from '@/types/anime'; 
+import { AnimeDetails } from '@/types/anime'; 
 
 interface AnimeHeroProps {
   anime: AnimeDetails;
@@ -11,18 +10,21 @@ interface AnimeHeroProps {
 }
 
 export default function AnimeHero({ anime, episodesCount }: AnimeHeroProps) {
+  
+  const displayGenres = anime.genres?.slice(0, 5) || [];
+
   return (
-<div className="relative w-full min-h-[85vh] md:min-h-[60vh] flex items-center">
-  <div className="absolute inset-0 z-0 overflow-hidden">
-    <img
-      src={anime.poster_url || '/placeholder.jpg'}
-      alt={anime.title}
-      className="w-full h-full object-cover object-center scale-105"
-    />
-    <div className="absolute inset-0 bg-linear-to-r from-white via-white/60 to-transparent"></div>
-    <div className="absolute inset-0 bg-linear-to-t from-white via-transparent to-transparent"></div>
-    <div className="absolute top-0 right-0 w-[55%] h-full bg-teal-200/20 blur-[120px] opacity-70"></div>
-  </div>
+    <div className="relative w-full min-h-[85vh] md:min-h-[60vh] flex items-center">
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <img
+          src={anime.poster_url || '/placeholder.jpg'}
+          alt={anime.title}
+          className="w-full h-full object-cover object-center scale-105"
+        />
+        <div className="absolute inset-0 bg-linear-to-r from-white via-white/60 to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-white via-transparent to-transparent"></div>
+        <div className="absolute top-0 right-0 w-[55%] h-full bg-teal-200/20 blur-[120px] opacity-70"></div>
+      </div>
 
       <div className="container mx-auto px-4 md:px-12 relative z-20 pt-20">
         <div className="max-w-3xl">
@@ -32,7 +34,7 @@ export default function AnimeHero({ anime, episodesCount }: AnimeHeroProps) {
 
           <div className="flex flex-wrap items-center gap-4 text-sm md:text-base font-medium text-gray-700 mb-6">
             <span className="bg-gray-200 text-black px-2 py-0.5 rounded border border-gray-900 uppercase">
-              {anime.type}
+              {anime.type || 'TV'}
             </span>
             <ul className="flex items-center gap-2 list-none">
               <li>• {anime.year}</li>
@@ -45,6 +47,19 @@ export default function AnimeHero({ anime, episodesCount }: AnimeHeroProps) {
               </span>
             </div>
           </div>
+
+          {displayGenres.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-8">
+              {displayGenres.map((genre) => (
+                <span 
+                  key={genre.id} 
+                  className="px-3 py-1 bg-white/60 backdrop-blur-md border border-gray-400 rounded-full text-xs font-bold text-gray-900 uppercase tracking-wider shadow-sm"
+                >
+                  {genre.name}
+                </span>
+              ))}
+            </div>
+          )}
 
           <div className="flex items-center gap-4 mb-8">
             <button

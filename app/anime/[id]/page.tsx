@@ -1,4 +1,3 @@
-// app/anime/[id]/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,7 +8,6 @@ import AnimeHero from '@/components/AnimeHero';
 import AnimePlayer from '@/components/AnimePlayer';
 import AnimeComments from '@/components/AnimeComments';
 import AnimeSidebar from '@/components/AnimeSidebar';
-
 import AnimeViewSkeleton from '@/components/skeletons/AnimeViewSkeleton'; 
 
 import { AnimeDetails, Episode } from '@/types/anime';
@@ -45,9 +43,21 @@ export default function AnimeViewPage() {
         const epJson = await epRes.json();
         const recJson = await recRes.json();
 
-        setAnime(animeJson.data || animeJson);
+       
+        const rawData = animeJson.data || animeJson;
+
+    
+        if (rawData.tags && (!rawData.genres || rawData.genres.length === 0)) {
+            rawData.genres = rawData.tags;
+        }
+
+        setAnime(rawData);
+        
+    
         const epList: Episode[] = Array.isArray(epJson.data) ? epJson.data : (Array.isArray(epJson) ? epJson : []);
         setAllEpisodes(epList);
+
+      
         setRecommendations((recJson.data || []).filter((a: any) => String(a.id) !== String(id)).slice(0, 4));
 
       } catch (err) {
@@ -61,9 +71,7 @@ export default function AnimeViewPage() {
     fetchData();
   }, [id]);
 
-   if (isLoading) {
-    return <AnimeViewSkeleton />;
-  }
+  if (isLoading) return <AnimeViewSkeleton />;
 
   if (error || !anime) return (
     <div className="min-h-screen bg-white text-red-500 flex flex-col items-center justify-center p-4">
