@@ -4,13 +4,14 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  FaInstagram,
+  FaTelegram,
   FaYoutube,
   FaDiscord,
   FaInfoCircle,
   FaShieldAlt,
   FaBalanceScale,
-  FaQuestionCircle
+  FaQuestionCircle,
+
 } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { HiAdjustmentsHorizontal, HiMiniBookmark, HiFire } from 'react-icons/hi2';
@@ -95,8 +96,8 @@ export default function Footer() {
 
           <Block title="Мы в соцсетях">
             <div className="grid grid-cols-4 gap-3">
-              <SocialCard href="#" icon={FaDiscord} label="Discord" hoverClass="hover:bg-[#5865F2] hover:text-white" />
-              <SocialCard href="#" icon={FaInstagram} label="Instagram" hoverClass="hover:bg-gradient-to-tr from-[#FD1D1D] to-[#833AB4] hover:text-white" />
+              <SocialCard href="https://discord.gg/PYMXhXcR5Y" icon={FaDiscord} label="Discord" hoverClass="hover:bg-[#5865F2] hover:text-white" />
+              <SocialCard href="https://t.me/aniYume_group" icon={FaTelegram} label="Telegram" hoverClass="hover:bg-[#2ca0de] hover:text-white" />
               <SocialCard href="#" icon={FaYoutube} label="YouTube" hoverClass="hover:bg-[#FF0000] hover:text-white" />
               <SocialCard href="#" icon={FaXTwitter} label="Twitter" hoverClass="hover:bg-black hover:text-white" />
             </div>

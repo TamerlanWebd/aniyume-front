@@ -265,7 +265,7 @@ export default function Header() {
 
             <Link
               href="/register"
-              className="flex items-center gap-2 rounded-xl bg-linear-to-r from-[#39bcba] to-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:shadow-xl hover:brightness-110 active:scale-95"
+              className="flex items-center gap-2 rounded-lg bg-[#39bcba] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#2f9795] hover:shadow-lg"
             >
               <FaUserPlus className="text-sm" />
               <span>Регистрация</span>

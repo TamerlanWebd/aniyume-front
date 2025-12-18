@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { FaChevronLeft, FaChevronRight, FaStar, FaPlay } from 'react-icons/fa';
+import React, { useEffect, useState, useRef } from 'react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import AnimeCardSkeleton from '@/components/skeletons/AnimeCardSkeleton';
-import { useRef } from 'react';
+import AnimeCard from '@/components/AnimeCard'; 
 
 
 interface AnimeData {
@@ -18,80 +16,6 @@ interface AnimeData {
   type?: string;
   genres?: { name: string }[] | string[]; 
 }
-
-const AnimeCard: React.FC<AnimeData> = ({
-  id,
-  title,
-  poster_url,
-  rating,
-  description,
-  year,
-  type,
-  genres,
-}) => {
-  const genreList = Array.isArray(genres) 
-    ? genres.slice(0, 3).map((g: any) => (typeof g === 'string' ? g : g.name))
-    : [];
-
-  return (
-    <Link href={`/anime/${id}`} className="block group w-full max-w-60">
-      <div 
-        className="
-          relative rounded-xl overflow-hidden bg-gray-200 aspect-2/3 
-          transition-all duration-300 
-          group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(33,208,184,0.4)]
-          border-2 border-transparent group-hover:border-[#21D0B8]
-        "
-      >
-        <div className="absolute top-2 left-2 z-20 flex items-center gap-1 bg-black/80 backdrop-blur-md border border-yellow-500/50 px-2 py-1 rounded-lg shadow-lg">
-          <FaStar className="text-yellow-400 text-xs" />
-          <span className="text-yellow-400 font-bold text-xs">{rating}</span>
-        </div>
-
-        <Image
-          src={poster_url || '/placeholder.jpg'}
-          alt={title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:blur-[3px] group-hover:scale-110"
-          unoptimized
-        />
-
-        <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-
-        <div className="absolute inset-0 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-            <div className="flex gap-2 mb-2 text-[10px] font-bold uppercase tracking-wider text-gray-300">
-              {year && <span className="bg-gray-700/80 px-2 py-0.5 rounded">{year}</span>}
-              {type && <span className="bg-[#21D0B8]/20 text-[#21D0B8] px-2 py-0.5 rounded">{type}</span>}
-            </div>
-
-            {genreList.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-2">
-                {genreList.map((g, idx) => (
-                  <span key={idx} className="text-[9px] border border-gray-500 text-gray-200 px-1.5 py-0.5 rounded-full">
-                    {g}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <p className="text-gray-300 text-xs line-clamp-3 mb-3 leading-snug">
-              {description ? description.replace(/<[^>]*>?/gm, '') : 'Нет описания...'}
-            </p>
-
-            <button className="w-full bg-[#21D0B8] hover:bg-[#1bb5a0] text-white font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg active:scale-95">
-              <FaPlay className="text-xs" /> Смотреть
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <h3 className="mt-3 text-center font-bold text-gray-800 text-sm truncate group-hover:text-[#21D0B8] transition-colors px-1">
-        {title}
-      </h3>
-    </Link>
-  );
-};
 
 interface AnimeListProps {
   title: string;
@@ -111,13 +35,9 @@ const AnimeList: React.FC<AnimeListProps> = ({ title }) => {
     const fetchAnime = async () => {
       try {
         setIsLoading(true);
-       if (currentPage > 1 && titleRef.current) {
-         titleRef.current.scrollIntoView({
-           behavior: 'smooth',
-           block: 'start',
-        });
-      }
-
+        if (currentPage > 1 && titleRef.current) {
+           titleRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
 
         const res = await fetch(`${API_BASE}/anime?page=${currentPage}&sort=newest&per_page=${ITEMS_PER_PAGE}`);
         
@@ -174,13 +94,9 @@ const AnimeList: React.FC<AnimeListProps> = ({ title }) => {
   };
 
   return (
-    
     <section className="container mx-auto px-4 py-16">
-      <div className="border-t border-slate-400 pt-20 "></div>
-      <div
-       ref={titleRef}
-       className="flex flex-col items-center justify-center mb-12 relative">
-        
+      <div className="border-t border-slate-400 pt-20"></div>
+      <div ref={titleRef} className="flex flex-col items-center justify-center mb-12 relative">
           <h2 className="text-6xl font-extrabold text-gray-800 tracking-tight text-center">
             {title}
           </h2>
