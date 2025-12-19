@@ -1,6 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
-import { FaGithub, FaTelegram, FaHeart, FaShieldAlt, FaRocket } from 'react-icons/fa'
+import { FaGithub, FaTelegram,  } from 'react-icons/fa'
+import { MdOutlineRocketLaunch } from "react-icons/md";
+import { LuShieldCheck } from "react-icons/lu";
+import { FaRegHeart } from "react-icons/fa6";
 
 export default function AboutPage() {
   return (
@@ -49,17 +52,17 @@ export default function AboutPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mb-20">
           <CleanCard
-            icon={<FaRocket />}
+            icon={<MdOutlineRocketLaunch />}
             title="Скорость"
             desc="Next.js 14 обеспечивает мгновенную загрузку и плавную навигацию."
           />
           <CleanCard
-            icon={<FaShieldAlt />}
+            icon={<LuShieldCheck />}
             title="Комфорт"
             desc="Адаптивный плеер, чистый интерфейс и удобство на любом устройстве."
           />
           <CleanCard
-            icon={<FaHeart />}
+            icon={<FaRegHeart />}
             title="Open Source"
             desc="Проект открыт для сообщества и развивается совместно."
           />
@@ -79,7 +82,7 @@ export default function AboutPage() {
             label="GitHub"
           />
           <SocialBtn
-            href="https://t.me/"
+            href="https://t.me/aniYume_group"
             icon={<FaTelegram />}
             label="Telegram"
           />

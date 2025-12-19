@@ -105,7 +105,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-20 border-t border-slate-300 py-10 text-center text-sm text-slate-400">
-          © {year} Aniyume. Все права защищены
+          © {year} AniYume. Все права защищены
         </div>
       </div>
     </footer>

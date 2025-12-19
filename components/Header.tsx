@@ -4,7 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { FaSignInAlt, FaUserPlus, FaSearch, FaSpinner, FaSadCry } from 'react-icons/fa';
+import { 
+  FaSignInAlt, FaUserPlus, FaSearch, FaSpinner, FaSadCry, 
+  FaMoon, FaSun, FaUserCircle 
+} from 'react-icons/fa';
 import { HiAdjustmentsHorizontal, HiFire, HiMiniBookmark } from "react-icons/hi2";
 import { IoCalendarNumberSharp } from "react-icons/io5";
 
@@ -17,6 +20,7 @@ interface SearchResult {
   type?: string;
 }
 
+// --- ЛОГИКА ПОИСКА (Оставил как было) ---
 function calculateLevenshteinDistance(str1: string, str2: string): number {
   const track = Array(str2.length + 1).fill(null).map(() =>
     Array(str1.length + 1).fill(null)
@@ -87,15 +91,29 @@ function filterByFuzzyMatch(
     .map((result) => result!.item);
 }
 
+// --- КОМПОНЕНТ HEADER ---
 export default function Header() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Новые состояния для авторизации и темы
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   const searchRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   const API_BASE = '/api/external';
+
+  // Проверка авторизации при загрузке
+  useEffect(() => {
+    const token = localStorage.getItem('userToken');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   useEffect(() => {
     const cleanQuery = query.trim();
@@ -144,6 +162,11 @@ export default function Header() {
   const handleLinkClick = () => {
     setIsOpen(false);
     setQuery('');
+  };
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    // Тут можно добавить реальную логику смены темы в будущем
   };
 
   return (
@@ -254,22 +277,50 @@ export default function Header() {
             </li>
           </ul>
 
-          <div className="flex items-center gap-3 border-l border-gray-200 pl-6">
-            <Link
-              href="/login"
-              className="hidden items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-gray-100 md:inline-flex"
-            >
-              <FaSignInAlt className="text-sm" />
-              <span>Вход</span>
-            </Link>
+          <div className="flex items-center gap-4 border-l border-gray-200 pl-6">
+            
+            {/* ЕСЛИ АВТОРИЗОВАН */}
+            {isLoggedIn ? (
+              <>
+                {/* Кнопка смены темы (Визуальная) */}
+                <button 
+                  onClick={toggleTheme}
+                  className="p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-[#39bcba] transition-all"
+                  title="Сменить тему"
+                >
+                  {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+                </button>
 
-            <Link
-              href="/register"
-              className="flex items-center gap-2 rounded-lg bg-[#39bcba] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#2f9795] hover:shadow-lg"
-            >
-              <FaUserPlus className="text-sm" />
-              <span>Регистрация</span>
-            </Link>
+                {/* Иконка пользователя (Профиль) */}
+                <Link 
+                  href="/profile" 
+                  className="text-gray-400 hover:text-[#39bcba] transition-colors"
+                  title="Личный кабинет"
+                >
+                  <FaUserCircle size={32} />
+                </Link>
+              </>
+            ) : (
+              
+              /* ЕСЛИ ГОСТЬ */
+              <>
+                <Link
+                  href="/login"
+                  className="hidden items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-gray-100 md:inline-flex"
+                >
+                  <FaSignInAlt className="text-sm" />
+                  <span>Вход</span>
+                </Link>
+
+                <Link
+                  href="/register"
+                  className="flex items-center gap-2 rounded-lg bg-[#39bcba] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#2f9795] hover:shadow-lg"
+                >
+                  <FaUserPlus className="text-sm" />
+                  <span>Регистрация</span>
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       </div>

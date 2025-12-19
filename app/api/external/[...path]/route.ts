@@ -1,43 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_URL = "https://kong-presentations-computers-jar.trycloudflare.com/api/v1/public";
+// 👇 НОВАЯ РАБОЧАЯ ССЫЛКА (добавил /api/v1 в конец)
+const BASE_URL = "https://dame-balance-sie-statistics.trycloudflare.com/api/v1";
 
-export async function GET(req: NextRequest, { params }: { params: { path: string[] } }) {
+async function handleProxy(req: NextRequest, { params }: { params: { path: string[] } }) {
   try {
-
     const resolvedParams = await params;
-    const pathStr = resolvedParams.path.join("/");
-    
+    const pathStr = resolvedParams.path.join("/"); // например "anime" или "auth/login"
     const searchParams = req.nextUrl.search;
 
-    const finalUrl = `${API_URL}/${pathStr}${searchParams}`;
-    
-    console.log(`🚀 [PROXY] Запрос на: ${finalUrl}`);
+    let finalUrl = "";
 
-    const response = await fetch(finalUrl, {
-      headers: {
-        "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-      },
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      console.error(`❌ [PROXY] Ошибка API: ${response.status} ${response.statusText}`);
-      return NextResponse.json(
-        { error: `API Error: ${response.status}` }, 
-        { status: response.status }
-      );
+    // ЛОГИКА МАРШРУТОВ:
+    // 1. Авторизация (вход/регистрация) -> /api/v1/auth/...
+    if (pathStr.startsWith("auth")) {
+        finalUrl = `${BASE_URL}/${pathStr}${searchParams}`;
+    } 
+    // 2. Всё остальное (аниме, жанры) -> /api/v1/public/...
+    else {
+        finalUrl = `${BASE_URL}/public/${pathStr}${searchParams}`;
     }
 
+    const options: RequestInit = {
+      method: req.method,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0",
+      },
+      cache: "no-store",
+    };
+
+    // Передаем тело запроса (для POST)
+    if (req.method !== "GET" && req.method !== "HEAD") {
+      const body = await req.json();
+      options.body = JSON.stringify(body);
+    }
+
+    console.log(`📡 [PROXY] ${pathStr} -> ${finalUrl}`);
+
+    const response = await fetch(finalUrl, options);
     const data = await response.json();
+
+    if (!response.ok) {
+        return NextResponse.json(data, { status: response.status });
+    }
+
     return NextResponse.json(data);
     
   } catch (error: any) {
-    console.error("🔥 [PROXY] КРИТИЧЕСКАЯ ОШИБКА:", error.message);
-    return NextResponse.json(
-      { error: "Internal Server Error", details: error.message }, 
-      { status: 500 }
-    );
+    console.error("🔥 PROXY ERROR:", error);
+    return NextResponse.json({ error: "Proxy Error" }, { status: 500 });
   }
 }
+
+export { handleProxy as GET, handleProxy as POST };
