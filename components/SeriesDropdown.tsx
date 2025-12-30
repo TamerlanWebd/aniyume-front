@@ -21,8 +21,9 @@ export default function SeriesDropdown({ series, onSelect }: SeriesDropdownProps
     <div className="relative w-64">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 flex items-center justify-between
-                   shadow-sm hover:shadow-md transition-all duration-200"
+        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 flex items-center
+                   justify-between shadow-sm hover:shadow-md transition-all duration-200 
+                   dark:bg-[#2c2c2c] dark:border-gray-600"
       >
         <span className="text-gray-700">{selected}</span>
         <FaChevronDown className={`text-gray-500 transition-transform ${open ? "rotate-180" : ""}`} />
@@ -30,12 +31,14 @@ export default function SeriesDropdown({ series, onSelect }: SeriesDropdownProps
 
       {open && (
         <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-2 shadow-lg
-                        overflow-hidden max-h-60 overflow-y-auto animate-fadeIn">
+                        overflow-hidden max-h-60 overflow-y-auto animate-fadeIn
+                        dark:bg-[#2c2c2c] dark:border-gray-600">
           {series.map((item, idx) => (
             <li
               key={idx}
               onClick={() => chooseSeries(item)}
-              className="px-4 py-2 cursor-pointer hover:bg-[#2EC4B6] hover:text-white transition-colors"
+              className="px-4 py-2 cursor-pointer hover:bg-[#2EC4B6] hover:text-white transition-colors
+              dark:bg-[#2c2c2c] dark:hover:bg-[#39bcba] dark:text-gray-200"
             >
               {item}
             </li>

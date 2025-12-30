@@ -6,23 +6,28 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**',
       },
+      {
+        protocol: 'http',
+        hostname: '164.90.185.95',
+      },
     ],
   },
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: '/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
+          
             value: `
               default-src 'self';
               script-src 'self' 'unsafe-eval' 'unsafe-inline';
               style-src 'self' 'unsafe-inline';
-              img-src 'self' data: https:;
-              font-src 'self';
-              frame-src 'self' https://player.dreamerscast.com https://www.youtube.com https://kodik.info;
-              connect-src 'self';
+              img-src 'self' data: https: http:;
+              font-src 'self' https: data:;
+              frame-src 'self' https: http:;
+              connect-src 'self' http://164.90.185.95 https://covers-determination-compliance-outlets.trycloudflare.com;
             `.replace(/\s{2,}/g, ' ').trim(),
           },
         ],

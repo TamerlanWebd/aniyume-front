@@ -1,23 +1,25 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import LayoutClient from './layoutClient'
-import ScrollToTop from "@/components/ScrollToTop";
+import ScrollToTop from "@/components/layout/ScrollToTop";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Aniyume - Онлайн-платформа для просмотра аниме',
-  description: 'Смотрите аниме онлайн, ищите по жанрам и сохраняйте любимые'
+  title: 'Aniyume - Платформа для просмотра аниме',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru">
+    <html lang="ru" suppressHydrationWarning>
       <body className={inter.className}>
-        
-        <LayoutClient>
-          {children}<ScrollToTop />
-        </LayoutClient>
+        <ThemeProvider>
+          <LayoutClient>
+            {children}
+            <ScrollToTop />
+          </LayoutClient>
+        </ThemeProvider>
       </body>
     </html>
   )

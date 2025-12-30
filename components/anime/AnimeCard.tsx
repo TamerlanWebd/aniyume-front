@@ -42,10 +42,11 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
           transition-all duration-300 
           group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(33,208,184,0.4)]
           border-2 border-transparent group-hover:border-[#21D0B8]
+          dark:bg-gray-900
         "
       >
      
-        <div className="absolute top-2 left-2 z-20 flex items-center gap-1 bg-black/80 backdrop-blur-md border border-yellow-500/50 px-2 py-1 rounded-lg shadow-lg">
+        <div className="absolute top-2 left-2 z-20 flex items-center gap-1 bg-black/50 border border-yellow-500/50 px-2 py-1 rounded-lg shadow-lg">
           <FaStar className="text-yellow-400 text-xs" />
           <span className="text-yellow-400 font-bold text-xs">{rating}</span>
         </div>
@@ -86,14 +87,16 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
               {description ? description.replace(/<[^>]*>?/gm, '') : 'Нет описания...'}
             </p>
 
-            <button className="w-full bg-[#21D0B8] hover:bg-[#1bb5a0] text-white font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg active:scale-95">
-              <FaPlay className="text-xs" /> Смотреть
+            <button className="w-full bg-[#21D0B8] hover:bg-[#1bb5a0] text-white font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg active:scale-95
+            dark:text-gray-800">
+              <FaPlay className="text-xs dark:text-gray-800" /> Смотреть
             </button>
           </div>
         </div>
       </div>
 
-      <h3 className="mt-3 text-center font-bold text-gray-800 text-sm truncate group-hover:text-[#21D0B8] transition-colors px-1">
+      <h3 className="mt-3 text-center font-bold text-gray-800 text-sm truncate group-hover:text-[#21D0B8] transition-colors px-1
+      dark:text-gray-200">
         {title}
       </h3>
     </Link>

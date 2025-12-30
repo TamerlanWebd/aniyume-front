@@ -36,14 +36,14 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#F9FAFB] text-gray-900 pt-10 pb-20 px-4 relative overflow-hidden">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-[#21D0B8] rounded-full blur-[160px] opacity-[0.04] pointer-events-none" />
+    <div className="min-h-screen w-full bg-[#F9FAFB] dark:bg-[#111111] text-gray-900 dark:text-gray-200 pt-10 pb-20 px-4 relative overflow-hidden transition-colors">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-[#21D0B8] rounded-full blur-[160px] opacity-[0.04] dark:opacity-[0.07] pointer-events-none" />
 
-      <h1 className="text-4xl text-center mb-6 relative z-10 md:text-6xl font-extrabold tracking-tight text-gray-900">
+      <h1 className="text-4xl md:text-6xl text-center mb-6 relative z-10 font-extrabold tracking-tight text-gray-900 dark:text-gray-200">
         Центр <span className="text-[#21D0B8]">Поддержки</span>
       </h1>
 
-      <p className="text-gray-500 text-lg md:text-xl font-medium max-w-2xl mx-auto mb-10">
+      <p className="text-gray-500 dark:text-gray-400 text-lg md:text-xl font-medium max-w-2xl mx-auto mb-10 text-center">
         Мы подготовили ответы на самые популярные вопросы, чтобы помочь вам разобраться с функционалом платформы.
       </p>
 
@@ -53,10 +53,11 @@ export default function FAQPage() {
             key={index}
             onClick={() => toggleQuestion(index)}
             className={`
-              group bg-white border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300
+              group rounded-2xl overflow-hidden cursor-pointer transition-all duration-300
+              bg-white dark:bg-[#161616] border
               ${openIndex === index
-                ? 'border-[#21D0B8] shadow-[0_8px_30px_rgba(33,208,184,0.15)] ring-1 ring-[#21D0B8]'
-                : 'border-gray-100 hover:border-[#21D0B8]/40 shadow-sm hover:shadow-md'
+                ? 'border-[#21D0B8] shadow-[0_8px_30px_rgba(33,208,184,0.18)] ring-1 ring-[#21D0B8]'
+                : 'border-gray-100 dark:border-gray-800 hover:border-[#21D0B8]/40 shadow-sm hover:shadow-md'
               }
             `}
           >
@@ -66,7 +67,7 @@ export default function FAQPage() {
                   mt-1 p-3.5 rounded-xl transition-colors duration-300 shrink-0
                   ${openIndex === index
                     ? 'bg-[#21D0B8] text-white'
-                    : 'bg-gray-50 text-[#21D0B8] group-hover:bg-[#21D0B8]/10'
+                    : 'bg-gray-50 dark:bg-[#1a1a1a] text-[#21D0B8] group-hover:bg-[#21D0B8]/10'
                   }
                 `}
               >
@@ -75,17 +76,29 @@ export default function FAQPage() {
 
               <div className="flex-1">
                 <div className="flex justify-between items-center w-full">
-                  <h3 className="text-lg font-bold pr-4 text-gray-800">
+                  <h3 className="text-lg font-bold pr-4 text-gray-800 dark:text-gray-200">
                     {item.question}
                   </h3>
-                  <span className={`transition-transform duration-300 ${openIndex === index ? 'rotate-180 text-[#21D0B8]' : 'text-gray-300'}`}>
+                  <span
+                    className={`transition-transform duration-300 ${
+                      openIndex === index
+                        ? 'rotate-180 text-[#21D0B8]'
+                        : 'text-gray-300 dark:text-gray-600'
+                    }`}
+                  >
                     {openIndex === index ? <BiMinus size={14} /> : <BiPlus size={14} />}
                   </span>
                 </div>
 
-                <div className={`grid transition-[grid-template-rows] duration-300 ease-out ${openIndex === index ? 'grid-rows-[1fr] opacity-100 mt-3' : 'grid-rows-[0fr] opacity-0 mt-0'}`}>
+                <div
+                  className={`grid transition-[grid-template-rows,opacity,margin] duration-300 ease-out ${
+                    openIndex === index
+                      ? 'grid-rows-[1fr] opacity-100 mt-3'
+                      : 'grid-rows-[0fr] opacity-0 mt-0'
+                  }`}
+                >
                   <div className="overflow-hidden">
-                    <p className="text-gray-500 text-base leading-relaxed font-medium">
+                    <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed font-medium">
                       {item.answer}
                     </p>
                   </div>
@@ -98,7 +111,9 @@ export default function FAQPage() {
       </div>
 
       <div className="mt-24 text-center">
-        <p className="text-gray-400 font-medium mb-4">Не нашли нужный ответ?</p>
+        <p className="text-gray-400 dark:text-gray-500 font-medium mb-4">
+          Не нашли нужный ответ?
+        </p>
         <Link
           href="https://t.me/kellyharvest"
           className="inline-flex items-center gap-2 text-[#21D0B8] font-bold hover:text-[#1aa895] text-lg transition-colors bg-[#21D0B8]/5 px-6 py-2 rounded-full hover:bg-[#21D0B8]/10"

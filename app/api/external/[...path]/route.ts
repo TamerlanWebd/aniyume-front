@@ -1,57 +1,65 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// 👇 НОВАЯ РАБОЧАЯ ССЫЛКА (добавил /api/v1 в конец)
-const BASE_URL = "https://dame-balance-sie-statistics.trycloudflare.com/api/v1";
+const BASE_URL = "http://164.90.185.95/api/v1";
 
 async function handleProxy(req: NextRequest, { params }: { params: { path: string[] } }) {
   try {
     const resolvedParams = await params;
-    const pathStr = resolvedParams.path.join("/"); // например "anime" или "auth/login"
+    const pathStr = resolvedParams.path.join("/");
     const searchParams = req.nextUrl.search;
 
-    let finalUrl = "";
 
-    // ЛОГИКА МАРШРУТОВ:
-    // 1. Авторизация (вход/регистрация) -> /api/v1/auth/...
-    if (pathStr.startsWith("auth")) {
-        finalUrl = `${BASE_URL}/${pathStr}${searchParams}`;
-    } 
-    // 2. Всё остальное (аниме, жанры) -> /api/v1/public/...
-    else {
-        finalUrl = `${BASE_URL}/public/${pathStr}${searchParams}`;
-    }
+    const isPrivate = 
+      pathStr.includes("auth") || 
+      pathStr.includes("profile") || 
+      pathStr.includes("favorites") || 
+      pathStr.includes("watch-history") || 
+      pathStr.includes("ratings") || 
+      pathStr.includes("statistics") || 
+      pathStr.includes("user-status") || 
+      pathStr.includes("status") || 
+      pathStr.includes("episodes-watched");
+
+    const finalUrl = isPrivate 
+      ? `${BASE_URL}/${pathStr}${searchParams}` 
+      : `${BASE_URL}/public/${pathStr}${searchParams}`;
+
+    console.log(`[PROXY] ${req.method} -> ${finalUrl}`);
+
+    const token = req.headers.get("authorization");
 
     const options: RequestInit = {
       method: req.method,
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "User-Agent": "Mozilla/5.0",
+        ...(token ? { "Authorization": token } : {}),
       },
       cache: "no-store",
     };
 
-    // Передаем тело запроса (для POST)
     if (req.method !== "GET" && req.method !== "HEAD") {
-      const body = await req.json();
-      options.body = JSON.stringify(body);
+      try {
+        const body = await req.clone().json();
+        options.body = JSON.stringify(body);
+      } catch (e) {
+      }
     }
-
-    console.log(`📡 [PROXY] ${pathStr} -> ${finalUrl}`);
 
     const response = await fetch(finalUrl, options);
-    const data = await response.json();
+    
 
-    if (!response.ok) {
-        return NextResponse.json(data, { status: response.status });
+    if (response.status === 500) {
+        console.error(`[BACKEND ERROR 500] на урл: ${finalUrl}`);
     }
 
-    return NextResponse.json(data);
-    
+    const data = await response.json().catch(() => ({}));
+    return NextResponse.json(data, { status: response.status });
+
   } catch (error: any) {
-    console.error("🔥 PROXY ERROR:", error);
+    console.error("Proxy error:", error);
     return NextResponse.json({ error: "Proxy Error" }, { status: 500 });
   }
 }
 
-export { handleProxy as GET, handleProxy as POST };
+export { handleProxy as GET, handleProxy as POST, handleProxy as PATCH, handleProxy as DELETE, handleProxy as PUT };

@@ -1,6 +1,6 @@
 // app/page.tsx
-import AnimeList from '../components/AnimeList'; 
-import AnimeCarousel from "@/components/AnimeCarousel"; 
+import AnimeList from '../components/anime/AnimeList'; 
+import AnimeCarousel from "@/components/anime/AnimeCarousel"; 
 
 export default function HomePage() {
   return (
@@ -10,7 +10,7 @@ export default function HomePage() {
       </div>
 
 
-      <div className="py-0 ">
+      <div className="py-0  ">
         <AnimeList title="Все Аниме" />
       </div>
     </main>

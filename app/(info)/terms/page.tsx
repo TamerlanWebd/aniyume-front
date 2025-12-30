@@ -1,7 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaFileContract, FaGavel, FaCopyright, FaBan, FaExclamationTriangle } from 'react-icons/fa';
+import {
+  FaFileContract,
+  FaGavel,
+  FaCopyright,
+  FaBan,
+  FaExclamationTriangle,
+} from 'react-icons/fa';
 
 export const metadata = {
   title: 'Условия использования | Aniyume',
@@ -10,24 +16,27 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen w-full bg-white text-gray-900 flex flex-col items-center justify-center py-12 px-4 overflow-hidden relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-[#21D0B8] rounded-full blur-[130px] opacity-[0.04] -z-10 pointer-events-none" />
+    <div className="min-h-screen w-full bg-white dark:bg-[#111111] text-gray-900 dark:text-gray-200 flex flex-col items-center justify-center py-12 px-4 overflow-hidden relative transition-colors">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-[#21D0B8] rounded-full blur-[130px] opacity-[0.04] dark:opacity-[0.07] -z-10 pointer-events-none" />
 
       <div className="max-w-[1400px] w-full grid grid-cols-1 lg:grid-cols-3 gap-10 items-center relative z-10">
         <div className="space-y-8 order-2 lg:order-1">
           <TermCard icon={<FaCopyright />} title="1. Авторское право" align="right">
             <p>
               Aniyume — это поисковая система (индексатор). Мы{' '}
-              <span className="font-bold text-gray-900">не храним</span> видеофайлы на своих серверах.
-              Весь контент подгружается из открытых источников (Kodik).
+              <span className="font-bold text-gray-900 dark:text-gray-200">
+                не храним
+              </span>{' '}
+              видеофайлы на своих серверах. Весь контент подгружается из открытых
+              источников (Kodik).
             </p>
           </TermCard>
 
           <TermCard icon={<FaBan />} title="2. Правила поведения" align="right">
             <p>
-              Запрещено использовать скрипты для автоматического сбора данных (парсинг) и пытаться
-              нарушить работу сайта (DDoS). Мы оставляем за собой право заблокировать доступ
-              нарушителям.
+              Запрещено использовать скрипты для автоматического сбора данных
+              (парсинг) и пытаться нарушить работу сайта (DDoS). Мы оставляем за
+              собой право заблокировать доступ нарушителям.
             </p>
           </TermCard>
         </div>
@@ -44,29 +53,35 @@ export default function TermsPage() {
             />
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-extrabold mt-8 tracking-tight text-gray-900 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-extrabold mt-8 tracking-tight text-gray-900 dark:text-gray-200 leading-tight">
             Условия <br />
             <span className="text-[#21D0B8]">Использования</span>
           </h1>
-          <p className="text-gray-400 text-base mt-4 font-medium max-w-xs mx-auto">
+
+          <p className="text-gray-400 dark:text-gray-500 text-base mt-4 font-medium max-w-xs mx-auto">
             Правила просты: будьте вежливы и наслаждайтесь просмотром.
           </p>
         </div>
 
         <div className="space-y-8 order-3">
-          <TermCard icon={<FaExclamationTriangle />} title="3. Отказ от ответственности" align="left">
+          <TermCard
+            icon={<FaExclamationTriangle />}
+            title="3. Отказ от ответственности"
+            align="left"
+          >
             <p>
-              Администрация не несет ответственности за содержание видеоматериалов. Сайт
-              предоставляется по принципу{' '}
-              <span className="text-[#21D0B8] font-semibold">«как есть»</span> (AS IS). Мы не
-              гарантируем аптайм 100%.
+              Администрация не несет ответственности за содержание
+              видеоматериалов. Сайт предоставляется по принципу{' '}
+              <span className="text-[#21D0B8] font-semibold">«как есть»</span>{' '}
+              (AS IS). Мы не гарантируем аптайм 100%.
             </p>
           </TermCard>
 
           <TermCard icon={<FaGavel />} title="4. Изменения правил" align="left">
             <p>
-              Мы можем обновлять условия использования в любой момент. Продолжая пользоваться
-              сайтом, вы автоматически соглашаетесь с актуальной версией правил.
+              Мы можем обновлять условия использования в любой момент.
+              Продолжая пользоваться сайтом, вы автоматически соглашаетесь с
+              актуальной версией правил.
             </p>
           </TermCard>
         </div>
@@ -88,7 +103,7 @@ function TermCard({ icon, title, children, align }: TermCardProps) {
   return (
     <div
       className={`
-        relative bg-white border border-gray-100
+        relative bg-white dark:bg-[#161616] border border-gray-100 dark:border-gray-800
         p-8 md:p-10
         rounded-3xl shadow-sm hover:shadow-2xl hover:border-[#21D0B8]/30 transition-all duration-300 group
         flex flex-col gap-5
@@ -105,10 +120,12 @@ function TermCard({ icon, title, children, align }: TermCardProps) {
         <div className="p-4 rounded-2xl bg-[#21D0B8]/10 text-[#21D0B8] group-hover:bg-[#21D0B8] group-hover:text-white transition-colors duration-300 shadow-sm">
           <span className="text-2xl">{icon}</span>
         </div>
-        <h3 className="font-bold text-xl text-gray-900">{title}</h3>
+        <h3 className="font-bold text-xl text-gray-900 dark:text-gray-200">
+          {title}
+        </h3>
       </div>
 
-      <div className="text-gray-500 text-base md:text-lg leading-relaxed font-medium">
+      <div className="text-gray-500 dark:text-gray-400 text-base md:text-lg leading-relaxed font-medium">
         {children}
       </div>
     </div>

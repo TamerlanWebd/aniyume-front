@@ -112,7 +112,7 @@ function CatalogContent() {
                 <p className="text-xs text-gray-500">{isLoading ? 'Загрузка...' : `Найдено: ${totalItems}`}</p>
             </div>
           </div>
-          <Link href={`/filter?${searchParams.toString()}`} className="flex items-center gap-2 text-[#21D0B8] font-bold text-sm bg-[#21D0B8]/10 px-4 py-2 rounded-lg hover:bg-[#21D0B8]/20 transition">
+          <Link href={`/filter?${searchParams.toString()}`} className="flex items-center gap-2 text-[#21D0B8] font-bold text-sm border-2 border-[#21D0B8] px-4 py-2 rounded-lg transition hover:bg-[#21D0B8] hover:text-white">  
              <FaFilter /> Фильтры
           </Link>
         </div>
@@ -147,7 +147,7 @@ function CatalogContent() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-10 gap-x-6 justify-items-center">
                 {animeData.map((anime) => (
                     <Link href={`/anime/${anime.id}`} key={anime.id} className="block group w-full max-w-60">
-                    <div className="relative rounded-xl overflow-hidden bg-gray-900 aspect-2/3 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl border-2 border-transparent group-hover:border-[#21D0B8]">
+                    <div className="relative rounded-xl overflow-hidden  aspect-2/3 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl border-2 border-transparent group-hover:border-[#21D0B8]">
                         <div className="absolute top-2 left-2 z-20 flex items-center gap-1 bg-black/80 backdrop-blur-md border border-yellow-500/50 px-2 py-1 rounded-lg shadow-lg">
                             <FaStar className="text-yellow-400 text-xs" />
                             <span className="text-yellow-400 font-bold text-xs">{anime.rating || '?'}</span>

@@ -27,48 +27,70 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden bg-linear-to-b from-white via-slate-50 to-slate-100 pt-28">
+    <footer className="relative overflow-hidden bg-white pt-28 
+    dark:bg-[#121212]">
       <div className="pointer-events-none absolute inset-x-0 top-0">
       
       </div>
 
-     <div className="grid grid-cols-1 gap-14 border-t border-slate-400 pt-20 sm:grid-cols-2 lg:grid-cols-4"/>
+     <div className="grid grid-cols-1 gap-14 border-t border-slate-400 pt-20 sm:grid-cols-2 lg:grid-cols-4
+     dark:border-gray-700 dark:border-t-4"/>
 <div className="relative mx-auto max-w-7xl px-2">
   <div className="flex items-center justify-between gap-12">
     
    
     <div className="max-w-xl">
-      <Link href="/" className="inline-block">
-        <Image
-          src="/images/logo0.png"
-          alt="AniYume"
-          width={480}          
-          height={180}
-          className="h-30 w-auto"
-        />
-      </Link>
+   <Link href="/" className="inline-block transition-opacity hover:opacity-80">
 
-      <p className="mt-6 text-lg leading-relaxed text-slate-700">
+  <Image
+    src="/images/logo0.png" 
+    alt="AniYume"
+    width={480}          
+    height={180}
+    className="h-30 w-auto dark:hidden"
+  />
+
+  <Image
+    src="/images/logo01.png"
+    alt="AniYume"
+    width={480}          
+    height={180}
+    className="hidden h-30 w-auto dark:block"
+  />
+</Link>
+
+      <p className="mt-6 text-lg leading-relaxed text-slate-700
+      dark:text-gray-300">
         AniYume — современная платформа для просмотра аниме.
         Новинки, расписание, коллекции и живое сообщество в одном месте.
       </p>
     </div>
 
    
-    <div className="relative">
-      <Image
-        src="/images/44.png"
-        alt="AniYume mascot"
-        width={900}
-        height={400}
-        className="w-[420px] h-auto"
-        priority
-      />
-    </div>
+  <div className="relative">
+  <Image
+    src="/images/44.png" 
+    alt="AniYume mascot"
+    width={900}
+    height={400}
+    className="w-[420px] h-auto dark:hidden"
+    priority
+  />
+
+  <Image
+    src="/images/55.png" 
+    alt="AniYume mascot"
+    width={900}
+    height={400}
+    className="hidden w-[420px] h-auto dark:block"
+    priority
+  />
+</div>
 </div>
 
 
-        <div className="grid grid-cols-1 gap-14 border-t border-slate-400 pt-20 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-14 border-t border-slate-400 pt-20 sm:grid-cols-2 lg:grid-cols-4
+        dark:border-gray-700 dark:border-t-4">
           <Block title="Навигация">
             <FooterLink href="/popular" icon={HiFire}>Популярное</FooterLink>
             <FooterLink href="/schedule" icon={IoCalendarNumberSharp}>Расписание</FooterLink>
@@ -84,14 +106,17 @@ export default function Footer() {
           </Block>
 
           <Block title="Поддержка">
-            <p className="text-slate-600">Наша команда отвечает ежедневно</p>
+            <p className="text-slate-600
+            dark:text-gray-400">Наша команда отвечает ежедневно</p>
             <a
               href="mailto:support@aniyume.com"
-              className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-6 py-4 font-semibold text-white transition hover:bg-[#2EC4B6]"
+              className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-6 py-4 font-semibold text-white transition hover:bg-[#2EC4B6]
+              dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-[#39bcba]"
             >
               support@aniyume.com
             </a>
-            <span className="mt-3 block text-sm text-slate-400">10:00 – 22:00</span>
+            <span className="mt-3 block text-sm text-slate-400
+            dark:text-gray-400">10:00 – 22:00</span>
           </Block>
 
           <Block title="Мы в соцсетях">
@@ -104,9 +129,11 @@ export default function Footer() {
           </Block>
         </div>
 
-        <div className="mt-20 border-t border-slate-300 py-10 text-center text-sm text-slate-400">
+        <div className="mt-20 border-t border-slate-300 py-10 text-center text-sm text-slate-400
+        dark:border-gray-700 dark:text-gray-400">
           © {year} AniYume. Все права защищены
         </div>
+    
       </div>
     </footer>
   );
@@ -115,7 +142,8 @@ export default function Footer() {
 function Block({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="mb-6 text-lg font-bold text-slate-900">
+      <h3 className="mb-6 text-lg font-bold text-slate-900
+      dark:text-gray-200">
         <span className="border-b-4 border-[#2EC4B6] pb-1">{title}</span>
       </h3>
       <div className="flex flex-col gap-4">{children}</div>
@@ -127,7 +155,8 @@ function FooterLink({ href, icon: Icon, children }: FooterLinkProps) {
   return (
     <Link
       href={href}
-      className="group flex items-center gap-4 text-base text-slate-600 transition hover:translate-x-2 hover:text-slate-900"
+      className="group flex items-center gap-4 text-base text-slate-600 transition hover:translate-x-2 hover:text-slate-900
+      dark:text-gray-400 dark:hover:text-gray-100"
     >
       <Icon className="text-xl text-slate-400 transition group-hover:text-[#2EC4B6]" />
       {children}
@@ -141,7 +170,8 @@ function SocialCard({ href, icon: Icon, label, hoverClass }: { href: string; ico
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-xl bg-slate-100 text-slate-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${hoverClass}`}
+      className={`group flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-xl bg-slate-100 text-slate-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-md 
+        dark:bg-gray-900 dark:text-gray-400 ${hoverClass}`}
     >
       <Icon className="text-2xl transition-transform duration-300 group-hover:scale-110" />
       <span className="text-[10px] font-semibold leading-none opacity-80 group-hover:opacity-100">{label}</span>

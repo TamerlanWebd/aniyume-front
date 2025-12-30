@@ -34,10 +34,11 @@ export default function ScrollToTop() {
         border-[3px] border-white 
         ring-2 ring-[#2EC4B6]
         hover:scale-110 hover:shadow-[#2EC4B6]/40 hover:shadow-xl
+        dark:border-gray-700
         ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"}
       `}
     >
-      <ArrowUp strokeWidth={3} className="w-6 h-6" />
+      <ArrowUp strokeWidth={3} className="w-6 h-6 dark:text-gray-800" />
     </button>
   );
 }

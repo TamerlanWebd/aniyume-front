@@ -3,9 +3,9 @@
 import Slider, { Settings } from "react-slick";
 import { useState, useEffect, CSSProperties, MouseEventHandler } from "react";
 import Link from "next/link";
-import { FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa";
-import { MdNewReleases } from "react-icons/md";
-import CarouselSkeleton from './skeletons/CarouselSkeleton';
+import {FaStar } from "react-icons/fa";
+import { BsFire } from "react-icons/bs";
+import CarouselSkeleton from '@/components/skeletons/CarouselSkeleton' ;
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
@@ -133,10 +133,14 @@ export default function AnimeCarousel() {
   return (
     <div className="w-full max-w-[1400px] mx-auto mb-12 px-4 md:px-16 overflow-visible">
       <div className="flex flex-col items-center justify-center mb-8">
-        <h2 className="text-7xl md:text-6xl font-extrabold text-gray-800 tracking-tight text-center">
-          Новинки сезона <MdNewReleases className="inline-block ml-2 text-gray-800" />
-         <hr className="mt-4 w-90 mx-auto border-t border-[#21D0B8]  text-center border-4 rounded-2xl" />
-        </h2>
+          <h2 className="relative inline-block text-4xl md:text-7xl font-black text-gray-900 dark:text-white tracking-tighter">
+    <BsFire className="inline-block mb-2 mr-4 text-[#21D0B8] animate-pulse scale-x-[-1]" />
+    <span className="bg-clip-text text-transparent bg-linear-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-300 dark:to-white">
+      Новинки сезона
+    </span>
+    <BsFire className="inline-block mb-2 ml-4 text-[#21D0B8] animate-pulse" />
+    <div className="mt-4 h-1.5 w-full bg-linear-to-r from-transparent via-[#21D0B8] to-transparent rounded-full opacity-80" />
+  </h2>
       </div>
 
       <Slider {...settings}>
@@ -187,7 +191,7 @@ export default function AnimeCarousel() {
                             </span>
                         )}
                         {anime.type && (
-                            <span className="bg-linear-to-r from-[#21D0B8]/40 to-[#21D0B8]/20 text-[#E0FFFC] px-3 py-1 rounded-lg text-xs font-bold uppercase
+                            <span className="bg-linear-to-r from-[#21D0B8]/40 to-[#21D0B8]/20 text-[#fcffe0] px-3 py-1 rounded-lg text-xs font-bold uppercase
                               border border-[#21D0B8]/50 backdrop-blur-sm shadow-md shadow-[#21D0B8]/30">
                                 {anime.type}
                             </span>
@@ -195,9 +199,8 @@ export default function AnimeCarousel() {
                       </div>
                       
                       {anime.rating && (
-                          <div className="flex items-center gap-1.5 text-yellow-300 ml-auto 
-                            bg-linear-to-r from-yellow-500/20 to-orange-500/10 px-3 py-1 rounded-lg
-                            border border-yellow-400/30 backdrop-blur-sm font-bold shadow-md">
+                          <div className="flex items-center gap-1.5 text-[#eadb16] 
+                            px-3 py-1 font-bold ">
                               <FaStar size={14} />
                               <span className="text-sm">{anime.rating}</span>
                           </div>

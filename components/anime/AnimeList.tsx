@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import AnimeCardSkeleton from '@/components/skeletons/AnimeCardSkeleton';
-import AnimeCard from '@/components/AnimeCard'; 
+import AnimeCard from '@/components/anime/AnimeCard'; 
 
 
 interface AnimeData {
@@ -95,9 +95,9 @@ const AnimeList: React.FC<AnimeListProps> = ({ title }) => {
 
   return (
     <section className="container mx-auto px-4 py-16">
-      <div className="border-t border-slate-400 pt-20"></div>
+      <div className="border-t-4 border-slate-200  pt-20 dark:border-zinc-700"></div>
       <div ref={titleRef} className="flex flex-col items-center justify-center mb-12 relative">
-          <h2 className="text-6xl font-extrabold text-gray-800 tracking-tight text-center">
+          <h2 className="text-6xl font-extrabold text-gray-800 tracking-tight text-center dark:text-gray-200">
             {title}
           </h2>
           <div className="w-64 h-1 bg-[#21D0B8] rounded-full mt-4"></div>
@@ -119,7 +119,8 @@ const AnimeList: React.FC<AnimeListProps> = ({ title }) => {
 
       {!isLoading && animeData.length > 0 && (
         <div className="mt-20 flex flex-col items-center">
-            <div className="flex items-center gap-2 bg-white p-2 rounded-2xl shadow-sm border border-gray-200">
+            <div className="flex items-center gap-2 bg-white p-2 rounded-2xl shadow-sm border border-gray-200
+            dark:bg-[#0c0c0c] dark:border-gray-600">
                 <button
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
@@ -139,7 +140,7 @@ const AnimeList: React.FC<AnimeListProps> = ({ title }) => {
                 <button
                     onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
-                    className="p-3 rounded-xl hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition text-gray-600"
+                    className="p-3 rounded-xl hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition text-gray-600 "
                 >
                     <FaChevronRight />
                 </button>
@@ -154,10 +155,10 @@ const PageButton = ({ page, active, onClick }: { page: number, active: boolean, 
     <button
         onClick={() => onClick(page)}
         className={`
-            w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all duration-200
+            w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all duration-200  
             ${active 
-                ? "bg-[#21D0B8] text-white shadow-lg shadow-teal-200 scale-110" 
-                : "text-gray-600 hover:bg-gray-100 hover:text-[#21D0B8]"
+                ? "bg-[#21D0B8] text-white shadow-lg shadow-teal-200 scale-110 dark:shadow-teal-900/40 dark:text-gray-200 " 
+                : "text-gray-600 hover:bg-gray-100 hover:text-[#21D0B8] dark:text-gray-300 dark:hover:bg-[#333333] "
             }
         `}
     >
