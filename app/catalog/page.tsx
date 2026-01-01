@@ -102,13 +102,13 @@ function CatalogContent() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+    <div className="min-h-screen bg-gray-50 pb-20 dark:bg-[#111111] transition-colors ">
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm dark:bg-[#111111] dark:border-gray-800 ">
         <div className="container mx-auto px-4 md:px-8 py-5 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button onClick={() => router.push('/')} className="text-gray-500 hover:text-gray-800 transition"><FaArrowLeft size={20} /></button>
+            <button onClick={() => router.push('/')} className="text-gray-500 hover:text-gray-800 transition dark:text-gray-200"><FaArrowLeft size={20} /></button>
             <div>
-                <h1 className="text-2xl font-bold text-gray-900">Каталог</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-200">Каталог</h1>
                 <p className="text-xs text-gray-500">{isLoading ? 'Загрузка...' : `Найдено: ${totalItems}`}</p>
             </div>
           </div>
@@ -120,7 +120,7 @@ function CatalogContent() {
         {activeFilters.length > 0 && (
           <div className="container mx-auto px-4 md:px-8 py-3 flex flex-wrap gap-2 border-t border-gray-100">
             {activeFilters.map(([key, value]) => (
-              <div key={key} className="flex items-center gap-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium border border-gray-200">
+              <div key={key} className="flex items-center gap-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium border border-gray-200 dark:text-gray-200">
                 <span className="text-gray-400">{FILTER_LABELS[key] || key}:</span>
                 <span>{value}</span>
                 <button onClick={() => removeFilter(key)} className="text-gray-400 hover:text-red-500 ml-1"><FaTimes /></button>
@@ -163,7 +163,7 @@ function CatalogContent() {
                             </div>
                         </div>
                     </div>
-                    <h3 className="mt-3 text-center font-bold text-gray-800 text-sm truncate group-hover:text-[#21D0B8] transition-colors px-1">{anime.title}</h3>
+                    <h3 className="mt-3 text-center font-bold text-gray-800 text-sm truncate group-hover:text-[#21D0B8] transition-colors px-1 dark:text-gray-200">{anime.title}</h3>
                     </Link>
                 ))}
                 </div>
@@ -171,12 +171,12 @@ function CatalogContent() {
 
             {!isLoading && totalPages > 1 && (
                 <div className="mt-16 flex flex-col items-center">
-                    <div className="flex items-center gap-2 bg-white p-2 rounded-2xl shadow-sm border border-gray-200">
-                        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="p-3 rounded-xl hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition text-gray-600"><FaChevronLeft /></button>
+                    <div className="flex items-center gap-2 bg-white p-2 rounded-2xl  border border-gray-200 dark:bg-[#1a1a1a] dark:border-gray-800">
+                        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="p-3 rounded-xl hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition text-gray-600 dark:text-gray-200"><FaChevronLeft /></button>
                         <div className="flex items-center gap-1 px-2">{renderPageNumbers()}</div>
-                        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="p-3 rounded-xl hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition text-gray-600"><FaChevronRight /></button>
+                        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="p-3 rounded-xl hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition text-gray-600 dark:text-gray-200"><FaChevronRight /></button>
                     </div>
-                    <div className="text-gray-400 text-xs mt-3 font-medium">Страница {currentPage} из {totalPages}</div>
+                    <div className="text-gray-400 text-xs mt-3 font-medium ">Страница {currentPage} из {totalPages}</div>
                 </div>
             )}
           </>

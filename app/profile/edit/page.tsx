@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { FaPencilAlt, FaTimes, FaCheck } from "react-icons/fa";
-import Cropper, { Area } from "react-easy-crop";
+import EditProfileSkeleton from "@/components/skeletons/EditProfileSkeleton";
+import { FaPencilAlt, FaUser, FaQuoteLeft, FaInfoCircle, FaChevronLeft, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -18,24 +18,16 @@ export default function EditProfilePage() {
     status_text: "",
   });
 
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [finalBlob, setFinalBlob] = useState<Blob | null>(null);
-  const [showCropper, setShowCropper] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  useEffect(() => {
+useEffect(() => {
     const fetchCurrentData = async () => {
       try {
         const token = localStorage.getItem("userToken");
-        if (!token) {
-          router.push("/login");
-          return;
-        }
+        if (!token) return router.push("/login");
         const res = await fetch("/api/external/profile/me", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         });
         if (res.ok) {
           const data = await res.json();
@@ -43,9 +35,15 @@ export default function EditProfilePage() {
           setFormData({
             name: user.name || "",
             bio: user.bio || "",
-            status_text: user.status_text || "",
+            status_text: user.custom_status || user.status_text || "",
           });
-          if (user.avatar_url) setPreviewUrl(user.avatar_url);
+          
+          const avatar = user.avatar || user.avatar_url;
+          if (avatar) {
+            const baseUrl = "http://164.90.185.95/storage/";
+            const fullUrl = avatar.startsWith("http") ? avatar : `${baseUrl}${avatar}`;
+            setPreviewUrl(`${fullUrl}?t=${Date.now()}`);
+          }
         }
       } catch (err) {
         console.error(err);
@@ -56,271 +54,209 @@ export default function EditProfilePage() {
     fetchCurrentData();
   }, [router]);
 
-  const onCropComplete = useCallback((_croppedArea: Area, pixels: Area) => {
-    setCroppedAreaPixels(pixels);
-  }, []);
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      setSelectedFile(file);
       const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        setImageSrc(reader.result as string);
-        setShowCropper(true);
-      });
+      reader.onloadend = () => setPreviewUrl(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
-  const createCroppedImage = async () => {
-    try {
-      if (!imageSrc || !croppedAreaPixels) return;
-
-      const image = new Image();
-      image.src = imageSrc;
-      await new Promise((res) => (image.onload = res));
-
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      canvas.width = croppedAreaPixels.width;
-      canvas.height = croppedAreaPixels.height;
-
-      ctx.drawImage(
-        image,
-        croppedAreaPixels.x,
-        croppedAreaPixels.y,
-        croppedAreaPixels.width,
-        croppedAreaPixels.height,
-        0,
-        0,
-        croppedAreaPixels.width,
-        croppedAreaPixels.height
-      );
-
-      const base64Image = canvas.toDataURL("image/jpeg");
-      setPreviewUrl(base64Image);
-
-      canvas.toBlob((blob) => {
-        if (blob) {
-          setFinalBlob(blob);
-          setShowCropper(false);
-        }
-      }, "image/jpeg");
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setMessage(null);
-
     try {
       const token = localStorage.getItem("userToken");
-      const data = new FormData();
-      data.append("name", formData.name);
-      data.append("status_text", formData.status_text);
-      data.append("bio", formData.bio);
 
-      if (finalBlob) {
-        data.append("avatar", finalBlob, "avatar.jpg");
-      }
-
-      const res = await fetch("/api/external/profile/me", {
+      const profileRes = await fetch("/api/external/profile/me", {
         method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          custom_status: formData.status_text,
+          bio: formData.bio,
+        }),
       });
 
-      if (res.ok) {
-        setMessage({ type: "success", text: "Профиль успешно обновлен!" });
-        setTimeout(() => router.push("/profile"), 1500);
-      } else {
-        throw new Error();
+      if (!profileRes.ok) {
+        const debugText = await profileRes.clone().text();
+        console.log("ОШИБКА PUT PROFILE:", debugText); 
+        throw new Error("Ошибка обновления данных профиля");
       }
-    } catch {
-      setMessage({ type: "error", text: "Не удалось сохранить данные" });
+
+
+      if (selectedFile) {
+        const avatarData = new FormData();
+        avatarData.append("avatar", selectedFile);
+
+        const avatarRes = await fetch("/api/external/profile/me/avatar", {
+          method: "POST",
+          headers: { 
+            Authorization: `Bearer ${token}`, 
+            Accept: "application/json" 
+          },
+          body: avatarData,
+        });
+
+        if (!avatarRes.ok) {
+          const debugText = await avatarRes.clone().text();
+          console.log("ОШИБКА POST AVATAR:", debugText);
+          
+          const errData = await avatarRes.json().catch(() => ({}));
+          throw new Error(errData.errors?.avatar?.[0] || "Ошибка загрузки аватара");
+        } else {
+          const successData = await avatarRes.json();
+          console.log("УСПЕХ AVATAR:", successData); 
+        }
+      }
+
+      setMessage({ type: "success", text: "Профиль успешно обновлен!" });
+      setTimeout(() => {
+        router.refresh();
+        router.push("/profile");
+      }, 1500);
+    } catch (err: any) {
+      console.error("CATCH ERROR:", err);
+      setMessage({ type: "error", text: err.message || "Не удалось сохранить" });
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-[#2EC4B6] font-bold">
-        Загрузка...
-      </div>
-    );
-  }
+  if (loading) return <EditProfileSkeleton />;
 
-  return (
-    <div className="min-h-screen bg-[#F8FAFC] pt-10 pb-20 relative">
-      {showCropper && imageSrc && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex flex-col items-center justify-center p-4">
-          <div className="relative w-full max-w-lg aspect-square bg-slate-900 rounded-2xl overflow-hidden shadow-2xl">
-            <Cropper
-              image={imageSrc}
-              crop={crop}
-              zoom={zoom}
-              aspect={1}
-              cropShape="round"
-              showGrid={false}
-              onCropChange={setCrop}
-              onZoomChange={setZoom}
-              onCropComplete={onCropComplete}
-            />
-          </div>
-          <div className="w-full max-w-lg mt-8 space-y-6 px-4">
-            <input
-              type="range"
-              value={zoom}
-              min={1}
-              max={3}
-              step={0.1}
-              onChange={(e) => setZoom(Number(e.target.value))}
-              className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#2EC4B6]"
-            />
-            <div className="flex gap-4">
-              <button
-                type="button"
-                onClick={() => setShowCropper(false)}
-                className="flex-1 py-4 bg-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-700 transition"
-              >
-                <FaTimes /> Отмена
-              </button>
-              <button
-                type="button"
-                onClick={createCroppedImage}
-                className="flex-1 py-4 bg-[#2EC4B6] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-teal-600 transition shadow-lg shadow-teal-900/20"
-              >
-                <FaCheck /> Применить
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+ return (
 
-      <div className="max-w-2xl mx-auto px-6">
+    <div className="flex-1 w-full bg-white dark:bg-[#111111] flex flex-col transition-colors duration-300 overflow-hidden">
+      
+      <div className="w-full border-b border-slate-300 dark:border-white/15 bg-slate-50/50 dark:bg-[#111111]/50 backdrop-blur-md px-6 py-3 flex items-center justify-between">
         <button
           onClick={() => router.back()}
-          className="mb-6 flex items-center gap-2 text-slate-400 hover:text-[#2EC4B6] transition-colors font-medium"
+          className="group flex items-center gap-2 text-slate-500 dark:text-gray-400 hover:text-[#2EC4B6] transition-all font-bold text-sm"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Назад в профиль
+          <FaChevronLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
+          ВЕРНУТЬСЯ В ПРОФИЛЬ
         </button>
+      </div>
 
-        <div className="bg-white rounded-lg p-8 shadow-sm border border-slate-100">
-          <h1 className="text-3xl font-black text-gray-800 mb-8">Настройки профиля</h1>
+      <div className="flex-1 flex overflow-hidden">
+        
+        <div className="hidden lg:flex w-72 border-r border-slate-300 dark:border-white/15 p-10 flex-col gap-6 bg-slate-50/30 dark:bg-[#111111]">
+             <h1 className="text-4xl font-black text-[#2EC4B6] tracking-tighter italic">
+              Настройки 
+            </h1>
+            <h1 className="text-4xl font-black text-black dark:text-white  tracking-tighter italic -mt-5">
+              профиля
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-gray-400 font-medium leading-relaxed">
+              Настройте свой профиль так, чтобы он выделялся. Ваши данные обновятся мгновенно.
+            </p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="flex items-center gap-6 mb-10 p-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-              <div className="relative w-24 h-24 shrink-0">
-                {previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="w-full h-full rounded-full object-cover border-2 border-[#2EC4B6]"
-                  />
-                ) : (
-                  <div className="w-full h-full rounded-full bg-linear-to-br from-[#2EC4B6] to-teal-600 flex items-center justify-center text-white text-3xl font-bold">
-                    {formData.name[0]?.toUpperCase()}
-                  </div>
-                )}
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
+          <div className="max-w-4xl w-full mx-auto p-6 md:p-12 space-y-12">
+            
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-8 pb-10 border-b border-slate-100 dark:border-white/5">
+              <div className="relative group">
+                <div className="absolute -inset-2 bg-[#2EC4B6] rounded-full blur opacity-10 group-hover:opacity-30 transition duration-700"></div>
+                <div className="relative w-32 h-32 rounded-full overflow-hidden ring-4 ring-[#2EC4B6] shadow-xl">
+                  {previewUrl ? (
+                    <img src={previewUrl} className="w-full h-full object-cover" alt="avatar" />
+                  ) : (
+                    <div className="w-full h-full bg-slate-100 dark:bg-[#1a1a1a] flex items-center justify-center text-slate-400 dark:text-white text-4xl font-bold">
+                      {formData.name[0]?.toUpperCase()}
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute inset-0 bg-slate-900/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
+                  >
+                    <FaPencilAlt className="text-[#2EC4B6] w-6 h-6 mb-1" />
+                    <span className="text-[10px] font-black text-white uppercase">Изменить</span>
+                  </button>
+                </div>
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
+              </div>
+
+              <div className="space-y-1">
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white">Фото профиля</h3>
+                <p className="text-sm text-slate-500 dark:text-gray-400 max-w-sm">
+                  Используйте уникальное изображение. <br className="hidden md:block"/>
+                  Поддерживаются <span className="text-[#2EC4B6] font-bold">JPG, PNG, GIF</span>.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 text-[11px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-[0.15em] ml-1">
+                  <FaUser className="text-[#2EC4B6]" /> Никнейм
+                </label>
                 <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="hidden"
-                  accept="image/*"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-[#161616] border border-slate-200 dark:border-white/5 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2EC4B6]/50 focus:bg-white dark:focus:bg-[#1a1a1a] transition-all shadow-sm"
+                  placeholder="Ваше имя"
+                  required
                 />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="absolute -bottom-1 -right-1 bg-white p-2 rounded-full shadow-md border border-slate-100 text-[#2EC4B6] hover:scale-110 transition"
-                >
-                  <FaPencilAlt className="w-4 h-4" />
-                </button>
               </div>
-              <div>
-                <p className="font-bold text-gray-700">Фото профиля</p>
-                <p className="text-xs text-slate-400 mt-1">Кликните на иконку для изменения.</p>
+
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 text-[11px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-[0.15em] ml-1">
+                  <FaQuoteLeft className="text-[#2EC4B6]" /> Статус
+                </label>
+                <input
+                  type="text"
+                  value={formData.status_text}
+                  onChange={(e) => setFormData({ ...formData, status_text: e.target.value })}
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-[#161616] border border-slate-200 dark:border-white/5 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2EC4B6]/50 focus:bg-white dark:focus:bg-[#1a1a1a] transition-all shadow-sm"
+                  placeholder="Ваш статус"
+                />
+              </div>
+
+              <div className="md:col-span-2 space-y-3">
+                <label className="flex items-center gap-2 text-[11px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-[0.15em] ml-1">
+                  <FaInfoCircle className="text-[#2EC4B6]" /> О себе
+                </label>
+                <textarea
+                  value={formData.bio}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  rows={5}
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-[#161616] border border-slate-200 dark:border-white/5 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2EC4B6]/50 focus:bg-white dark:focus:bg-[#1a1a1a] transition-all shadow-sm resize-none"
+                  placeholder="Расскажите вашу историю..."
+                />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-500 uppercase ml-1">Никнейм</label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2EC4B6]/20 focus:border-[#2EC4B6] transition"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-500 uppercase ml-1">Статус</label>
-              <input
-                type="text"
-                value={formData.status_text}
-                onChange={(e) => setFormData({ ...formData, status_text: e.target.value })}
-                className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2EC4B6]/20 focus:border-[#2EC4B6] transition"
-                maxLength={50}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-500 uppercase ml-1">О себе</label>
-              <textarea
-                value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2EC4B6]/20 focus:border-[#2EC4B6] transition min-h-[120px] resize-none"
-              />
-            </div>
-
-            {message && (
-              <div
-                className={`p-4 rounded-2xl text-sm font-bold ${
-                  message.type === "success" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
-                }`}
-              >
-                {message.text}
-              </div>
-            )}
-
-            <div className="pt-4 flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 pt-6 pb-20">
               <button
                 type="submit"
                 disabled={saving}
-                className={`flex-1 bg-[#2EC4B6] text-white py-4 rounded-lg font-black shadow-lg shadow-teal-100 hover:bg-teal-600 transition-all active:scale-95 flex items-center justify-center ${
-                  saving ? "opacity-70" : ""
-                }`}
+                className="px-10 py-4 bg-linear-to-r from-[#2EC4B6] to-[#26a69a] text-white dark:text-black font-black uppercase tracking-tighter rounded-2xl shadow-lg shadow-[#2EC4B6]/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
               >
-                {saving ? (
-                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                ) : (
-                  "Сохранить изменения"
-                )}
+                {saving ? "СОХРАНЕНИЕ..." : "Сохранить профиль"}
               </button>
+              
               <button
                 type="button"
                 onClick={() => router.push("/profile")}
-                className="px-8 bg-slate-100 text-slate-500 py-4 rounded-lg font-bold hover:bg-slate-200 transition"
+                className="px-10 py-4 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-gray-400 font-bold uppercase tracking-tighter rounded-2xl hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
               >
                 Отмена
               </button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   );
-}
+};

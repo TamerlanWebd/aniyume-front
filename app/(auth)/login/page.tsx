@@ -55,11 +55,9 @@ const LoginPage = () => {
       if (token) {
         localStorage.setItem("userToken", token);
         if (user) localStorage.setItem("userData", JSON.stringify(user));
-
         alert("Вход успешен!");
         router.push("/");
       } else {
-        console.error("Full response:", responseData);
         throw new Error("Нет токена в ответе сервера");
       }
     } catch (error: any) {
@@ -70,18 +68,17 @@ const LoginPage = () => {
   };
 
   return (
-    
     <AuthBackground>
-      <div
-        className="min-h-screen flex items-center justify-center text-white bg-cover bg-center"
-      >
-        <div className="bg-white p-10 rounded-lg shadow-xl w-full max-w-md border-3 border-[#2EC4B6]/70 backdrop-blur-sm shadow-black/60">
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="bg-white dark:bg-[#161616] p-10 rounded-2xl shadow-xl w-full max-w-md border border-[#2EC4B6]/40 dark:border-gray-800 backdrop-blur-sm transition-colors">
           <h1 className="text-4xl font-extrabold mb-4 text-center text-[#2EC4B6] flex items-center justify-center gap-2">
-            <FaSignInAlt className="text-[#2EC4B6]" /> Вход
+            <FaSignInAlt /> Вход
           </h1>
+
           <p className="text-[#2EC4B6] mb-6 text-center text-sm font-medium">
             Добро пожаловать! Введите данные для входа.
           </p>
+
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label
@@ -98,11 +95,12 @@ const LoginPage = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="email@example.com"
-                  className="w-full pl-10 pr-4 py-2 rounded-lg border bg-white text-gray-700 border-[#2EC4B6] outline-none transition focus:ring-2 focus:ring-[#2EC4B6] focus:border-[#2EC4B6]"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#2EC4B6]/60 dark:border-gray-700 bg-white dark:bg-[#111111] text-gray-700 dark:text-gray-200 outline-none transition focus:ring-2 focus:ring-[#2EC4B6]"
                   required
                 />
               </div>
             </div>
+
             <div>
               <label
                 htmlFor="password"
@@ -118,18 +116,20 @@ const LoginPage = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2 rounded-lg border bg-white text-gray-700 border-[#2EC4B6] outline-none transition focus:ring-2 focus:ring-[#2EC4B6] focus:border-[#2EC4B6]"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#2EC4B6]/60 dark:border-gray-700 bg-white dark:bg-[#111111] text-gray-700 dark:text-gray-200 outline-none transition focus:ring-2 focus:ring-[#2EC4B6]"
                   required
                 />
               </div>
             </div>
+
             <button
               type="submit"
               disabled={loading}
-              className="bg-[#2EC4B6] hover:bg-[#259B92] text-white font-bold py-3 px-6 rounded-lg w-full transition-all shadow-md hover:shadow-lg text-lg flex justify-center items-center gap-2 disabled:opacity-50"
+              className="w-full bg-[#2EC4B6] hover:bg-[#259B92] text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition shadow-md hover:shadow-lg disabled:opacity-50"
             >
               {loading ? "Вход..." : "Войти"}
             </button>
+
             <div className="text-center pt-2 flex flex-col items-center">
               <FaUserPlus className="text-[#2EC4B6] mb-2" />
               <Link

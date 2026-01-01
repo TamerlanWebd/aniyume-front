@@ -2,17 +2,86 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import SeriesDropdown from '@/components/SeriesDropdown';
 import { Episode } from '@/types/anime';
+import { FaStar } from 'react-icons/fa'; 
 
 interface AnimePlayerProps {
+  animeId: number;
   episodes: Episode[];
-  onEpisodeSelect?: (episodeNumber: number) => void; // ДОБАВЛЕНО ЭТО
+  onEpisodeSelect?: (episodeNumber: number) => void;
   onProgressUpdate?: (episodeId: number, seconds: number, completed: boolean) => void;
 }
 
-export default function AnimePlayer({ episodes, onEpisodeSelect, onProgressUpdate }: AnimePlayerProps) {
+export default function AnimePlayer({ animeId, episodes, onEpisodeSelect, onProgressUpdate }: AnimePlayerProps) {
   const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
+  
+  // Состояния для рейтинга
+  const [userRating, setUserRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
+  const [isRatingLoading, setIsRatingLoading] = useState(false);
+
   const watchedSeconds = useRef(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+useEffect(() => {
+  const fetchRating = async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token || !animeId) return;
+
+    try {
+      const res = await fetch(`/api/external/ratings/anime/${animeId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.rating) {
+          setUserRating(data.rating);  // убери Math.round(data.rating / 2)
+        }
+      }
+    } catch (err) {
+      console.error("Ошибка загрузки рейтинга:", err);
+    }
+  };
+  fetchRating();
+}, [animeId]);
+
+ const handleRate = async (value: number) => {
+  const token = localStorage.getItem('userToken');
+  if (!token) return alert("Пожалуйста, войдите в аккаунт");
+
+  console.log('Sending rating:', { anime_id: animeId, rating: value });
+
+  setIsRatingLoading(true);
+  try {
+    const res = await fetch('/api/external/ratings', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        anime_id: animeId,
+        rating: value
+      })
+    });
+
+    console.log('Response status:', res.status);
+    const text = await res.clone().text();
+    console.log('Response text:', text);
+
+    if (res.ok) {
+      setUserRating(value);
+    } else {
+      const errorData = await res.json().catch(() => ({ message: text }));
+      console.error('Rating error response:', errorData);
+    }
+  } catch (err) {
+    console.error("Ошибка сохранения рейтинга:", err);
+  } finally {
+    setIsRatingLoading(false);
+  }
+};
+
 
   const uniqueEpisodes = useMemo(() => {
     const map = new Map<number, Episode>();
@@ -43,15 +112,11 @@ export default function AnimePlayer({ episodes, onEpisodeSelect, onProgressUpdat
     if (currentEpisode) {
       if (intervalRef.current) clearInterval(intervalRef.current);
       watchedSeconds.current = 0;
-
       intervalRef.current = setInterval(() => {
         watchedSeconds.current += 1;
-        if (watchedSeconds.current % 30 === 0) {
-          syncProgress();
-        }
+        if (watchedSeconds.current % 30 === 0) syncProgress();
       }, 1000);
     }
-
     return () => {
       syncProgress();
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -62,12 +127,9 @@ export default function AnimePlayer({ episodes, onEpisodeSelect, onProgressUpdat
     syncProgress();
     const epNum = parseInt(label.replace(/\D/g, ''));
     const ep = uniqueEpisodes.find(e => e.episode_number === epNum);
-    
     if (ep) {
       setCurrentEpisode(ep);
-      if (onEpisodeSelect) {
-        onEpisodeSelect(ep.episode_number); 
-      }
+      if (onEpisodeSelect) onEpisodeSelect(ep.episode_number);
     }
   };
 
@@ -79,12 +141,42 @@ export default function AnimePlayer({ episodes, onEpisodeSelect, onProgressUpdat
   return (
     <div id="player" className="container mx-auto px-4 md:px-12 py-10 dark:bg-[#111111]">
       <div className="mb-12">
-        <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
-          <h2 className="text-2xl font-semibold text-black
-          dark:text-gray-200">
-            {currentEpisode ? `Серия ${currentEpisode.episode_number}` : 'Плеер'}
-          </h2>
-          <div className="w-full md:w-64">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+          
+          <div className="flex items-center gap-6">
+            <h2 className="text-2xl font-semibold text-black dark:text-gray-200">
+              {currentEpisode ? `Серия ${currentEpisode.episode_number}` : 'Плеер'}
+            </h2>
+
+            <div className="flex items-center gap-1.5 bg-white dark:bg-[#1a1a1a] px-4 py-2 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => handleRate(star)}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+                  disabled={isRatingLoading}
+                  className={`transition-all duration-200 transform ${
+                    isRatingLoading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-125 active:scale-90'
+                  }`}
+                >
+                  <FaStar
+                    size={22}
+                    className={`transition-colors duration-200 ${
+                      star <= (hoverRating || userRating)
+                        ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.4)]'
+                        : 'text-gray-200 dark:text-gray-700'
+                    }`}
+                  />
+                </button>
+              ))}
+              {userRating > 0 && !hoverRating && (
+                <span className="ml-2 text-xs font-black text-[#39bcba]">{userRating}/5</span>
+              )}
+            </div>
+          </div>
+
+          <div className="w-full md:w-64 ">
             <SeriesDropdown
               series={uniqueEpisodes.map(ep => `Серия ${ep.episode_number}`)}
               onSelect={handleEpisodeChange}

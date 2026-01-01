@@ -2,64 +2,117 @@ import { NextRequest, NextResponse } from "next/server";
 
 const BASE_URL = "http://164.90.185.95/api/v1";
 
-async function handleProxy(req: NextRequest, { params }: { params: { path: string[] } }) {
+export async function handleProxy(
+  req: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
   try {
-    const resolvedParams = await params;
-    const pathStr = resolvedParams.path.join("/");
+    const { path } = await params;
+    const pathStr = path.join("/");
     const searchParams = req.nextUrl.search;
 
+    const privateKeywords = [
+      "status",
+      "profile",
+      "favorites",
+      "watch-history",
+      "ratings",
+      "bookmarks",
+      "statistics",
+      "auth",
+      "studios",
+    ];
 
-    const isPrivate = 
-      pathStr.includes("auth") || 
-      pathStr.includes("profile") || 
-      pathStr.includes("favorites") || 
-      pathStr.includes("watch-history") || 
-      pathStr.includes("ratings") || 
-      pathStr.includes("statistics") || 
-      pathStr.includes("user-status") || 
-      pathStr.includes("status") || 
-      pathStr.includes("episodes-watched");
+    const isPrivate = privateKeywords.some((keyword) =>
+      pathStr.includes(keyword)
+    );
 
-    const finalUrl = isPrivate 
-      ? `${BASE_URL}/${pathStr}${searchParams}` 
+    const finalUrl = isPrivate
+      ? `${BASE_URL}/${pathStr}${searchParams}`
       : `${BASE_URL}/public/${pathStr}${searchParams}`;
 
-    console.log(`[PROXY] ${req.method} -> ${finalUrl}`);
+    let token = req.headers.get("authorization") || "";
+    if (token && !token.startsWith("Bearer ")) {
+      token = `Bearer ${token}`;
+    }
 
-    const token = req.headers.get("authorization");
+    const contentType = req.headers.get("content-type") || "";
+    const isMultipart = contentType.includes("multipart/form-data");
+
+    if (isMultipart) {
+      const upstreamHeaders = new Headers(req.headers);
+      if (token) upstreamHeaders.set("Authorization", token);
+      upstreamHeaders.delete("host");
+
+      const upstreamReq = new Request(finalUrl, {
+        method: req.method,
+        headers: upstreamHeaders,
+        body: req.body,
+        // @ts-ignore
+        duplex: "half",
+      });
+
+      const response = await fetch(upstreamReq);
+      const text = await response.text();
+
+      let data;
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = { message: text };
+      }
+
+      return NextResponse.json(data, { status: response.status });
+    }
+
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+      "X-Requested-With": "XMLHttpRequest",
+      ...(token ? { Authorization: token } : {}),
+    };
+
+    if (req.method !== "GET" && req.method !== "HEAD") {
+      headers["Content-Type"] = "application/json";
+    }
 
     const options: RequestInit = {
       method: req.method,
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        ...(token ? { "Authorization": token } : {}),
-      },
+      headers,
       cache: "no-store",
     };
 
     if (req.method !== "GET" && req.method !== "HEAD") {
-      try {
-        const body = await req.clone().json();
-        options.body = JSON.stringify(body);
-      } catch (e) {
-      }
+      const body = await req.text();
+      if (body) options.body = body;
     }
 
     const response = await fetch(finalUrl, options);
-    
+    const text = await response.text();
 
-    if (response.status === 500) {
-        console.error(`[BACKEND ERROR 500] на урл: ${finalUrl}`);
+    let data;
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      data = { message: text };
     }
 
-    const data = await response.json().catch(() => ({}));
     return NextResponse.json(data, { status: response.status });
-
-  } catch (error: any) {
-    console.error("Proxy error:", error);
-    return NextResponse.json({ error: "Proxy Error" }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error: "Proxy Error",
+        details:
+          error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
+    );
   }
 }
 
-export { handleProxy as GET, handleProxy as POST, handleProxy as PATCH, handleProxy as DELETE, handleProxy as PUT };
+export {
+  handleProxy as GET,
+  handleProxy as POST,
+  handleProxy as PATCH,
+  handleProxy as DELETE,
+  handleProxy as PUT,
+};

@@ -20,10 +20,10 @@ export default function SeriesDropdown({ series, onSelect }: SeriesDropdownProps
   return (
     <div className="relative w-64">
       <button
-        onClick={() => setOpen(!open)}
-        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 flex items-center
-                   justify-between shadow-sm hover:shadow-md transition-all duration-200 
-                   dark:bg-[#2c2c2c] dark:border-gray-600"
+   onClick={() => setOpen(!open)}
+        className="w-full bg-[#2bdac3] text-gray-900 border border-gray-300 rounded-lg px-4 py-2 flex items-center
+                   justify-between shadow-sm hover:shadow-md transition-all duration-200
+                   dark:border-gray-600"
       >
         <span className="text-gray-700">{selected}</span>
         <FaChevronDown className={`text-gray-500 transition-transform ${open ? "rotate-180" : ""}`} />

@@ -165,6 +165,7 @@ const handleProgressUpdate = async (episodeId: number, seconds: number, complete
     </div>
 
     <AnimePlayer 
+      animeId={anime.id} 
       episodes={allEpisodes} 
       onEpisodeSelect={handleEpisodeWatch}
       onProgressUpdate={handleProgressUpdate} 

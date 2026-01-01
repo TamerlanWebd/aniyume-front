@@ -92,7 +92,7 @@ const RegisterPage = () => {
 
   return (
     <AuthBackground>
-      <div className="bg-white p-10 rounded-lg shadow-xl w-full max-w-md border-3 border-[#2EC4B6]/70 backdrop-blur-sm shadow-black/60">
+      <div className="bg-white dark:bg-[#161616] p-10 rounded-2xl shadow-xl w-full max-w-md border border-[#2EC4B6]/40 dark:border-gray-800 backdrop-blur-sm transition-colors">
         <h1 className="text-4xl font-bold mb-4 text-center text-[#2EC4B6] flex items-center justify-center gap-2">
           <FaUserPlus /> Регистрация
         </h1>
@@ -101,7 +101,10 @@ const RegisterPage = () => {
           Создайте аккаунт в базе данных.
         </p>
 
-        <form className="space-y-4 text-[#2EC4B6]" onSubmit={handleSubmit}>
+        <form
+          className="space-y-4 text-[#2EC4B6]"
+          onSubmit={handleSubmit}
+        >
           <div>
             <label htmlFor="username" className="block font-semibold mb-1">
               Имя пользователя
@@ -114,7 +117,7 @@ const RegisterPage = () => {
                 value={formData.username}
                 onChange={handleChange}
                 placeholder="Ваше имя"
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#2EC4B6] text-gray-700 outline-none focus:ring-2 focus:ring-[#2EC4B6]"
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#2EC4B6]/60 dark:border-gray-700 bg-white dark:bg-[#111111] text-gray-700 dark:text-gray-200 outline-none focus:ring-2 focus:ring-[#2EC4B6]"
                 required
               />
             </div>
@@ -132,7 +135,7 @@ const RegisterPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="email@example.com"
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#2EC4B6] text-gray-700 outline-none focus:ring-2 focus:ring-[#2EC4B6]"
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#2EC4B6]/60 dark:border-gray-700 bg-white dark:bg-[#111111] text-gray-700 dark:text-gray-200 outline-none focus:ring-2 focus:ring-[#2EC4B6]"
                 required
               />
             </div>
@@ -150,17 +153,14 @@ const RegisterPage = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="********"
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#2EC4B6] text-gray-700 outline-none focus:ring-2 focus:ring-[#2EC4B6]"
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#2EC4B6]/60 dark:border-gray-700 bg-white dark:bg-[#111111] text-gray-700 dark:text-gray-200 outline-none focus:ring-2 focus:ring-[#2EC4B6]"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block font-semibold mb-1"
-            >
+            <label htmlFor="confirmPassword" className="block font-semibold mb-1">
               Повторите пароль
             </label>
             <div className="relative">
@@ -171,7 +171,7 @@ const RegisterPage = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="********"
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#2EC4B6] text-gray-700 outline-none focus:ring-2 focus:ring-[#2EC4B6]"
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#2EC4B6]/60 dark:border-gray-700 bg-white dark:bg-[#111111] text-gray-700 dark:text-gray-200 outline-none focus:ring-2 focus:ring-[#2EC4B6]"
                 required
               />
             </div>

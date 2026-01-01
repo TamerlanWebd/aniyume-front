@@ -11,7 +11,6 @@ import {
   FaShieldAlt,
   FaBalanceScale,
   FaQuestionCircle,
-
 } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { HiAdjustmentsHorizontal, HiMiniBookmark, HiFire } from 'react-icons/hi2';
@@ -27,70 +26,55 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden bg-white pt-28 
-    dark:bg-[#121212]">
-      <div className="pointer-events-none absolute inset-x-0 top-0">
-      
-      </div>
+    <footer className="relative overflow-hidden bg-white pt-28 dark:bg-[#121212]">
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6">
+        <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-12 text-center lg:text-left">
+          
+          <div className="max-w-xl flex flex-col items-center lg:items-start">
+            <Link href="/" className="inline-block transition-opacity hover:opacity-80">
+              <Image
+                src="/images/logo0.png" 
+                alt="AniYume"
+                width={480}          
+                height={180}
+                className="h-20 sm:h-30 w-auto dark:hidden"
+              />
+              <Image
+                src="/images/logo01.png"
+                alt="AniYume"
+                width={480}          
+                height={180}
+                className="hidden h-20 sm:h-30 w-auto dark:block"
+              />
+            </Link>
 
-     <div className="grid grid-cols-1 gap-14 border-t border-slate-400 pt-20 sm:grid-cols-2 lg:grid-cols-4
-     dark:border-gray-700 dark:border-t-4"/>
-<div className="relative mx-auto max-w-7xl px-2">
-  <div className="flex items-center justify-between gap-12">
-    
-   
-    <div className="max-w-xl">
-   <Link href="/" className="inline-block transition-opacity hover:opacity-80">
+            <p className="mt-6 text-lg leading-relaxed text-slate-700 dark:text-gray-300">
+              AniYume — современная платформа для просмотра аниме.
+              Новинки, расписание, коллекции и живое сообщество в одном месте.
+            </p>
+          </div>
 
-  <Image
-    src="/images/logo0.png" 
-    alt="AniYume"
-    width={480}          
-    height={180}
-    className="h-30 w-auto dark:hidden"
-  />
+          <div className="relative w-[280px] sm:w-[420px] shrink-0">
+            <Image
+              src="/images/44.png" 
+              alt="AniYume mascot"
+              width={900}
+              height={400}
+              className="w-full h-auto dark:hidden"
+              priority
+            />
+            <Image
+              src="/images/55.png" 
+              alt="AniYume mascot"
+              width={900}
+              height={400}
+              className="hidden w-full h-auto dark:block"
+              priority
+            />
+          </div>
+        </div>
 
-  <Image
-    src="/images/logo01.png"
-    alt="AniYume"
-    width={480}          
-    height={180}
-    className="hidden h-30 w-auto dark:block"
-  />
-</Link>
-
-      <p className="mt-6 text-lg leading-relaxed text-slate-700
-      dark:text-gray-300">
-        AniYume — современная платформа для просмотра аниме.
-        Новинки, расписание, коллекции и живое сообщество в одном месте.
-      </p>
-    </div>
-
-   
-  <div className="relative">
-  <Image
-    src="/images/44.png" 
-    alt="AniYume mascot"
-    width={900}
-    height={400}
-    className="w-[420px] h-auto dark:hidden"
-    priority
-  />
-
-  <Image
-    src="/images/55.png" 
-    alt="AniYume mascot"
-    width={900}
-    height={400}
-    className="hidden w-[420px] h-auto dark:block"
-    priority
-  />
-</div>
-</div>
-
-
-        <div className="grid grid-cols-1 gap-14 border-t border-slate-400 pt-20 sm:grid-cols-2 lg:grid-cols-4
-        dark:border-gray-700 dark:border-t-4">
+        <div className="grid grid-cols-1 gap-14 border-t border-slate-400 pt-20 sm:grid-cols-2 lg:grid-cols-4 dark:border-gray-700 dark:border-t-4">
           <Block title="Навигация">
             <FooterLink href="/popular" icon={HiFire}>Популярное</FooterLink>
             <FooterLink href="/schedule" icon={IoCalendarNumberSharp}>Расписание</FooterLink>
@@ -106,34 +90,29 @@ export default function Footer() {
           </Block>
 
           <Block title="Поддержка">
-            <p className="text-slate-600
-            dark:text-gray-400">Наша команда отвечает ежедневно</p>
+            <p className="text-slate-600 dark:text-gray-400">Наша команда отвечает ежедневно</p>
             <a
               href="mailto:support@aniyume.com"
-              className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-6 py-4 font-semibold text-white transition hover:bg-[#2EC4B6]
-              dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-[#39bcba]"
+              className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-6 py-4 font-semibold text-white transition hover:bg-[#2EC4B6] dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-[#39bcba]"
             >
               support@aniyume.com
             </a>
-            <span className="mt-3 block text-sm text-slate-400
-            dark:text-gray-400">10:00 – 22:00</span>
+            <span className="mt-3 block text-sm text-slate-400 dark:text-gray-400">10:00 – 22:00</span>
           </Block>
 
           <Block title="Мы в соцсетях">
-            <div className="grid grid-cols-4 gap-3">
-              <SocialCard href="https://discord.gg/PYMXhXcR5Y" icon={FaDiscord} label="Discord" hoverClass="hover:bg-[#5865F2] hover:text-white" />
+            <div className="grid grid-cols-4 gap-3 justify-items-center lg:justify-items-start">
+             <SocialCard href="https://discord.gg/PYMXhXcR5Y" icon={FaDiscord} label="Discord" hoverClass="hover:bg-[#5865F2] hover:text-white" />
               <SocialCard href="https://t.me/aniYume_group" icon={FaTelegram} label="Telegram" hoverClass="hover:bg-[#2ca0de] hover:text-white" />
-              <SocialCard href="#" icon={FaYoutube} label="YouTube" hoverClass="hover:bg-[#FF0000] hover:text-white" />
-              <SocialCard href="#" icon={FaXTwitter} label="Twitter" hoverClass="hover:bg-black hover:text-white" />
+              <SocialCard href="https://www.youtube.com/" icon={FaYoutube} label="YouTube" hoverClass="hover:bg-[#FF0000] hover:text-white" />
+              <SocialCard href="https://x.com/?lang=ru" icon={FaXTwitter} label="Twitter" hoverClass="hover:bg-black hover:text-white" />
             </div>
           </Block>
         </div>
 
-        <div className="mt-20 border-t border-slate-300 py-10 text-center text-sm text-slate-400
-        dark:border-gray-700 dark:text-gray-400">
+        <div className="mt-20 border-t border-slate-300 py-10 text-center text-sm text-slate-400 dark:border-gray-700 dark:text-gray-400">
           © {year} AniYume. Все права защищены
         </div>
-    
       </div>
     </footer>
   );
@@ -141,12 +120,11 @@ export default function Footer() {
 
 function Block({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div>
-      <h3 className="mb-6 text-lg font-bold text-slate-900
-      dark:text-gray-200">
+    <div className="flex flex-col items-center lg:items-start">
+      <h3 className="mb-6 text-lg font-bold text-slate-900 dark:text-gray-200">
         <span className="border-b-4 border-[#2EC4B6] pb-1">{title}</span>
       </h3>
-      <div className="flex flex-col gap-4">{children}</div>
+      <div className="flex flex-col items-center lg:items-start gap-4">{children}</div>
     </div>
   );
 }
@@ -155,8 +133,7 @@ function FooterLink({ href, icon: Icon, children }: FooterLinkProps) {
   return (
     <Link
       href={href}
-      className="group flex items-center gap-4 text-base text-slate-600 transition hover:translate-x-2 hover:text-slate-900
-      dark:text-gray-400 dark:hover:text-gray-100"
+      className="group flex items-center gap-4 text-base text-slate-600 transition hover:translate-x-2 hover:text-slate-900 dark:text-gray-400 dark:hover:text-gray-100"
     >
       <Icon className="text-xl text-slate-400 transition group-hover:text-[#2EC4B6]" />
       {children}
