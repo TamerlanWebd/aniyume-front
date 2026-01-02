@@ -1,5 +1,6 @@
 @import "tailwindcss";
-
+@import "./slick.css"; 
+@import "./slick-theme.css"; 
 @variant dark (&:where(.dark, .dark *));
 
 :root {

@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import LayoutClient from './layoutClient'
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import '@/lib/slick-styles'
 
 const inter = Inter({ subsets: ['latin'] })
 
