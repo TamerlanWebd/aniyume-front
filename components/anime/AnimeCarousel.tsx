@@ -5,8 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import CarouselSkeleton from '@/components/skeletons/CarouselSkeleton';
 
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
+
 
 interface AnimeItem {
   id: number;
