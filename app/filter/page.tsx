@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FaArrowLeft, FaFilter } from 'react-icons/fa';
 
 interface Genre { id: number; name: string; slug: string; }
-interface Studio { id: number; name: string; }
 interface Translator { translator: string; translation_type: string; }
 
 interface FilterSelectProps {
@@ -48,12 +47,10 @@ function FilterPageContent() {
   const API_BASE = '/api/external';
 
   const [genres, setGenres] = useState<Genre[]>([]);
-  const [studios, setStudios] = useState<Studio[]>([]);
   const [translators, setTranslators] = useState<string[]>([]);
 
   const [filters, setFilters] = useState({
     genre: '',
-    studio: '',
     translator: '',
     year: '',
     season: '',
@@ -67,7 +64,7 @@ function FilterPageContent() {
   useEffect(() => {
     setFilters({
       genre: searchParams.get('genre') || '',
-      studio: searchParams.get('studio') || '',
+     
       translator: searchParams.get('translator') || '',
       year: searchParams.get('year') || '',
       season: searchParams.get('season') || '',
@@ -81,9 +78,8 @@ function FilterPageContent() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [tagsRes, studiosRes, translatorsRes] = await Promise.all([
+      const [tagsRes, translatorsRes] = await Promise.all([
         fetch(`${API_BASE}/tags`),
-        fetch(`${API_BASE}/studios`),
         fetch(`${API_BASE}/episodes/translators`)
       ]);
 
@@ -94,10 +90,6 @@ function FilterPageContent() {
         setGenres(list);
       }
 
-      if (studiosRes.ok) {
-        const sData = await studiosRes.json();
-        setStudios(Array.isArray(sData.data) ? sData.data : []);
-      }
 
       if (translatorsRes.ok) {
         const trData = await translatorsRes.json();
@@ -126,7 +118,7 @@ function FilterPageContent() {
 
   const handleReset = () => {
     setFilters({
-      genre: '', studio: '', translator: '', year: '', season: '',
+      genre: '', translator: '', year: '', season: '',
       status: '', type: '', sort: 'newest', ageRating: '', country: '',
     });
   };

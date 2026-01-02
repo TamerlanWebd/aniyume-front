@@ -135,7 +135,7 @@ export default function Header() {
                   />
                 ) : (
                   <div className="w-9 h-9 rounded-full bg-[#39bcba] flex items-center justify-center text-white text-sm font-bold">
-                    {user?.name ? user.name[0].toUpperCase() : <FaUserCircle size={24} />}
+                    {user?.name ? user.name[0].toUpperCase() : <FaUserCircle size={32} />}
                   </div>
                 )}
               </Link>

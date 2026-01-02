@@ -1,169 +1,85 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import AnimeCardSkeleton from '@/components/skeletons/AnimeCardSkeleton';
-import AnimeCard from '@/components/anime/AnimeCard'; 
-
+import AnimeCard from '@/components/anime/AnimeCard';
 
 interface AnimeData {
   id: number;
   title: string;
   poster_url: string;
   rating: string;
-  description?: string;
   year?: number;
   type?: string;
-  genres?: { name: string }[] | string[]; 
 }
 
-interface AnimeListProps {
-  title: string;
-}
-
-const AnimeList: React.FC<AnimeListProps> = ({ title }) => {
-  const titleRef = useRef<HTMLDivElement | null>(null);
-  const [animeData, setAnimeData] = useState<AnimeData[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const API_BASE = '/api/external';
-  const ITEMS_PER_PAGE = 10; 
+const AnimeList = ({ title }: { title: string }) => {
+  const titleRef = useRef<HTMLDivElement>(null);
+  const [data, setData] = useState<AnimeData[]>([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAnime = async () => {
       try {
-        setIsLoading(true);
-        if (currentPage > 1 && titleRef.current) {
-           titleRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-
-        const res = await fetch(`${API_BASE}/anime?page=${currentPage}&sort=newest&per_page=${ITEMS_PER_PAGE}`);
-        
-        if (!res.ok) throw new Error(`Error: ${res.status}`);
-        
-        const data = await res.json();
-        const list = Array.isArray(data.data) ? data.data : data;
-        
-        setAnimeData(list);
-        
-        const lastPage = data.meta?.last_page || data.last_page || 10;
-        setTotalPages(lastPage);
-
-      } catch (error) {
-        console.error(error);
+        setLoading(true);
+        if (page > 1) titleRef.current?.scrollIntoView({ behavior: 'smooth' });
+        const res = await fetch(`/api/external/anime?page=${page}&sort=newest&per_page=10`);
+        const json = await res.json();
+        setData(json.data || json);
+        setTotal(json.meta?.last_page || json.last_page || 10);
+      } catch (e) {
+        console.error(e);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
-
     fetchAnime();
-  }, [currentPage]);
+  }, [page]);
 
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    
-    if (totalPages > 0) {
-        pageNumbers.push(<PageButton key={1} page={1} active={currentPage === 1} onClick={setCurrentPage} />);
-    }
+  const renderPages = () => {
+    const nums = [];
+    const pushBtn = (p: number) => nums.push(
+      <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${page === p ? "bg-[#21D0B8] text-white shadow-lg scale-110" : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-zinc-800"}`}>{p}</button>
+    );
 
-    if (currentPage > 4) {
-        pageNumbers.push(<span key="dots-left" className="px-2 text-gray-400">...</span>);
-    }
-
-    let startPage = Math.max(2, currentPage - 1);
-    let endPage = Math.min(totalPages - 1, currentPage + 1);
-    
-    if (currentPage <= 3) endPage = Math.min(totalPages - 1, 4);
-    if (currentPage >= totalPages - 2) startPage = Math.max(2, totalPages - 3);
-
-    for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(<PageButton key={i} page={i} active={currentPage === i} onClick={setCurrentPage} />);
-    }
-
-    if (currentPage < totalPages - 3) {
-        pageNumbers.push(<span key="dots-right" className="px-2 text-gray-400">...</span>);
-    }
-
-    if (totalPages > 1) {
-        pageNumbers.push(<PageButton key={totalPages} page={totalPages} active={currentPage === totalPages} onClick={setCurrentPage} />);
-    }
-
-    return pageNumbers;
+    pushBtn(1);
+    if (page > 3) nums.push(<span key="l" className="px-1 text-gray-400">...</span>);
+    for (let i = Math.max(2, page - 1); i <= Math.min(total - 1, page + 1); i++) pushBtn(i);
+    if (page < total - 2) nums.push(<span key="r" className="px-1 text-gray-400">...</span>);
+    if (total > 1) pushBtn(total);
+    return nums;
   };
 
   return (
-    <section className="container mx-auto px-4 py-16">
-      <div className="border-t-4 border-slate-200  pt-20 dark:border-zinc-700"></div>
-      <div ref={titleRef} className="flex flex-col items-center justify-center mb-12 relative">
-          <h2 className="text-6xl font-extrabold text-gray-800 tracking-tight text-center dark:text-gray-200">
-            {title}
-          </h2>
-          <div className="w-64 h-1 bg-[#21D0B8] rounded-full mt-4"></div>
+    <section className="container mx-auto px-4 py-10 md:py-16">
+      <div className="border-t-2 border-slate-100 pt-10 dark:border-zinc-800 mb-10" />
+      <div ref={titleRef} className="flex flex-col items-center mb-10">
+        <h2 className="text-3xl sm:text-6xl font-black text-gray-800 dark:text-gray-100 tracking-tighter uppercase">{title}</h2>
+        <div className="w-24 sm:w-48 h-1.5 bg-[#21D0B8] rounded-full mt-3" />
       </div>
 
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-10 gap-x-6 justify-items-center">
-            {Array.from({length: ITEMS_PER_PAGE}).map((_, i) => (
-                <AnimeCardSkeleton key={i} />
-            ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-10 gap-x-6 justify-items-center">
-          {animeData.map((item) => (
-            <AnimeCard key={item.id} {...item} />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-8 justify-items-center">
+        {loading 
+          ? Array.from({ length: 10 }).map((_, i) => <AnimeCardSkeleton key={i} />)
+          : data.map(item => <AnimeCard key={item.id} {...item} />)
+        }
+      </div>
 
-      {!isLoading && animeData.length > 0 && (
-        <div className="mt-20 flex flex-col items-center">
-            <div className="flex items-center gap-2 bg-white p-2 rounded-2xl shadow-sm border border-gray-200
-            dark:bg-[#0c0c0c] dark:border-gray-600">
-                <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="p-3 rounded-xl hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition text-gray-600"
-                >
-                    <FaChevronLeft />
-                </button>
-
-                <div className="hidden sm:flex items-center gap-1 px-2">
-                    {renderPageNumbers()}
-                </div>
-
-                <div className="sm:hidden font-bold text-gray-600 px-4">
-                    {currentPage} / {totalPages}
-                </div>
-
-                <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    className="p-3 rounded-xl hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition text-gray-600 "
-                >
-                    <FaChevronRight />
-                </button>
-            </div>
+      {!loading && data.length > 0 && (
+        <div className="mt-16 flex justify-center">
+          <div className="flex items-center gap-1 bg-white dark:bg-zinc-900 p-2 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
+            <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="p-3 disabled:opacity-20 dark:text-gray-300"><FaChevronLeft /></button>
+            <div className="hidden sm:flex gap-1">{renderPages()}</div>
+            <div className="sm:hidden px-4 font-black text-sm dark:text-gray-300">{page} / {total}</div>
+            <button onClick={() => setPage(p => Math.min(total, p + 1))} disabled={page === total} className="p-3 disabled:opacity-20 dark:text-gray-300"><FaChevronRight /></button>
+          </div>
         </div>
       )}
     </section>
   );
 };
-
-const PageButton = ({ page, active, onClick }: { page: number, active: boolean, onClick: (p: number) => void }) => (
-    <button
-        onClick={() => onClick(page)}
-        className={`
-            w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all duration-200  
-            ${active 
-                ? "bg-[#21D0B8] text-white shadow-lg shadow-teal-200 scale-110 dark:shadow-teal-900/40 dark:text-gray-200 " 
-                : "text-gray-600 hover:bg-gray-100 hover:text-[#21D0B8] dark:text-gray-300 dark:hover:bg-[#333333] "
-            }
-        `}
-    >
-        {page}
-    </button>
-);
 
 export default AnimeList;

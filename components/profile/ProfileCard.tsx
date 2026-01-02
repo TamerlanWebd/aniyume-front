@@ -14,6 +14,7 @@ interface ProfileCardProps {
   counts: {
     favorites: number;
     ratings: number;
+    comments: number;
   };
   onLogout: () => void;
 }
@@ -68,11 +69,13 @@ export const ProfileCard = ({
         </p>
       )}
 
-      <div className="grid grid-cols-2 gap-2 my-6">
-        <div className="bg-slate-50 dark:bg-[#161616] p-2 rounded-lg border border-slate-100 dark:border-gray-800">
-          <p className="font-bold text-[#2EC4B6]">{counts.favorites}</p>
+      <div className="grid grid-cols-2 gap-2 my-6 ">
+         <Link
+          href="/bookmarks"
+          className="bg-slate-50 dark:bg-[#161616] p-2 rounded-lg border border-slate-100 dark:border-gray-800 hover:border-[#2EC4B6] transition group"
+        > <p className="font-bold text-[#2EC4B6]">{counts.favorites}</p>
           <p className="text-[10px] text-slate-400 uppercase">Избранное</p>
-        </div>
+        </Link>
 
         <Link
           href="/profile/ratings"
@@ -83,7 +86,17 @@ export const ProfileCard = ({
             Оценки
           </p>
         </Link>
+     <Link
+    href="/profile/comments"
+    className="col-span-2 mx-auto w-fit bg-slate-50 dark:bg-[#161616] p-2 rounded-lg border border-slate-100 dark:border-gray-800 hover:border-[#2EC4B6] transition group"
+  >
+    <p className="font-bold text-[#2EC4B6]">{counts.comments || 0}</p>
+    <p className="text-[10px] text-slate-400 uppercase group-hover:text-[#2EC4B6]">
+      Комментарии
+    </p>
+  </Link>
       </div>
+      
 
       <p className="text-[10px] text-slate-400 mb-4">
         В клубе с {new Date(user.created_at).toLocaleDateString()}

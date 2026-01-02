@@ -77,11 +77,15 @@ export const RecentActivity = ({
                   {formatDate(item.last_watched_at)}
                 </p>
                 <p className="text-[10px] text-slate-300 dark:text-gray-600 font-medium uppercase mt-0.5">
-                  {new Date(item.last_watched_at).toLocaleTimeString("ru-RU", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
+                 {(() => {
+                   const d = new Date(item.last_watched_at);
+                   d.setHours(d.getHours() + 5);
+                   return d.toLocaleTimeString("ru-RU", {
+                     hour: "2-digit",
+                     minute: "2-digit",
+                });
+        })()}
+                </p> 
               </div>
             </div>
           ))

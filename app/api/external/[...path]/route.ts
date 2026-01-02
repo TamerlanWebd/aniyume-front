@@ -21,6 +21,8 @@ export async function handleProxy(
       "statistics",
       "auth",
       "studios",
+      "comments",
+      "my-anime-list",
     ];
 
     const isPrivate = privateKeywords.some((keyword) =>
