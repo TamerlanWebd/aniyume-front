@@ -1,199 +1,145 @@
-'use client';
-
+"use client";
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { FaBold, FaItalic, FaQuoteRight, FaLock, FaSyncAlt, FaSmile, FaTrash } from 'react-icons/fa';
+import { FaBold, FaItalic, FaQuoteRight, FaLock, FaSyncAlt, FaSmile, FaTrash, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 import Modal from '../layout/Modal';
 
 const EMOJIS = ['😊', '😂', '😍', '🤔', '😎', '😭', '😮', '🔥', '✨', '👍', '👎', '❤️', '😱', '🙌', '👀', '🎉', '🌟', '🍀', '🍕', '🚀'];
-const API_BASE = "http://164.90.185.95/storage/";
+const API = "http://164.90.185.95/storage/";
 
 export default function AnimeComments({ animeId }: { animeId: string | number }) {
   const [comments, setComments] = useState<any[]>([]);
-  const [captcha, setCaptcha] = useState({ input: '', text: '', timer: 0, canRefresh: true });
-  const [ui, setUi] = useState({ showEmojis: false, charCount: 0, isSubmitting: false, mounted: false });
-  const [user, setUser] = useState({ name: null, avatar: null, isLoggedIn: false, loading: true });
-  const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
+  const [user, setUser] = useState({ name: null, avatar: null, ok: false, loading: true });
+  const [cp, setCp] = useState({ input: '', text: '', t: 0, can: true });
+  const [ui, setUi] = useState({ emo: false, len: 0, sub: false, m: false, del: null as any, edit: null as any });
+  
+  const edRef = useRef<HTMLDivElement>(null);
+  const upRef = useRef<HTMLDivElement>(null);
 
-  const editorRef = useRef<HTMLDivElement>(null);
-  const MAX_LENGTH = 1000;
-  const getToken = () => localStorage.getItem("userToken");
+  const call = async (url: string, method = "GET", body?: any) => {
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("userToken")}` },
+      body: body ? JSON.stringify(body) : null
+    });
+    return res.ok ? res.json() : Promise.reject();
+  };
 
-  const getAvatar = (path: string | null) => path?.startsWith('http') ? path : path ? `${API_BASE}${path}` : null;
+  const getImg = (p: string) => p?.startsWith('http') ? p : p ? `${API}${p}` : null;
 
   useEffect(() => {
-    setUi(prev => ({ ...prev, mounted: true }));
-    refreshCaptcha(true);
-    checkAuth();
-    if (animeId) fetch(`/api/external/public/anime/${animeId}/comments`)
-      .then(res => res.json()).then(json => setComments(json.data || []));
+    setUi(p => ({ ...p, m: true }));
+    genCp();
+    call("/api/external/profile/me").then(j => setUser({ ...j.user, ok: true, loading: false })).catch(() => setUser(u => ({ ...u, loading: false })));
+    if (animeId) call(`/api/external/public/anime/${animeId}/comments`).then(j => setComments(j.data || []));
   }, [animeId]);
 
   useEffect(() => {
-    if (captcha.timer > 0) {
-      const t = setInterval(() => setCaptcha(c => ({ ...c, timer: c.timer - 1 })), 1000);
-      return () => clearInterval(t);
-    }
-    setCaptcha(c => ({ ...c, canRefresh: true }));
-  }, [captcha.timer]);
+    if (cp.t > 0) {
+      const i = setInterval(() => setCp(c => ({ ...c, t: c.t - 1 })), 1000);
+      return () => clearInterval(i);
+    } else setCp(c => ({ ...c, can: true }));
+  }, [cp.t]);
 
-  const checkAuth = async () => {
-    const token = getToken();
-    if (!token) return setUser(u => ({ ...u, loading: false }));
-    try {
-      const res = await fetch("/api/external/profile/me", { headers: { Authorization: `Bearer ${token}` } });
-      const json = await res.json();
-      const data = json.user || json;
-      if (res.ok) setUser({ name: data.name, avatar: data.avatar, isLoggedIn: true, loading: false });
-      else throw new Error();
-    } catch {
-      localStorage.removeItem("userToken");
-      setUser(u => ({ ...u, loading: false }));
-    }
-  };
-
-  const refreshCaptcha = (force = false) => {
-    if (!force && !captcha.canRefresh) return;
-    setCaptcha(c => ({ ...c, text: Math.random().toString(36).substring(2, 6), canRefresh: false, timer: 30 }));
-  };
+  const genCp = () => setCp(c => ({ ...c, text: Math.random().toString(36).slice(2, 6), can: false, t: 30 }));
 
   const exec = (cmd: string, val?: string) => {
     document.execCommand(cmd, false, val);
-    editorRef.current?.focus();
-    setUi(prev => ({ ...prev, charCount: editorRef.current?.innerText.length || 0 }));
+    edRef.current?.focus();
+    setUi(p => ({ ...p, len: edRef.current?.innerText.length || 0 }));
   };
 
-  const submitComment = async () => {
-    const text = editorRef.current?.innerText.trim() || "";
-    if (text.length < 3) return alert('Минимум 3 символа');
-    if (captcha.input !== captcha.text) return (alert('Неверная капча'), refreshCaptcha(true));
+  const send = async () => {
+    const html = edRef.current?.innerHTML, txt = edRef.current?.innerText.trim() || "";
+    if (txt.length < 3) return alert('Минимум 3 символа');
+    if (cp.input !== cp.text) return (alert('Капча!'), genCp());
 
-    setUi(prev => ({ ...prev, isSubmitting: true }));
-    try {
-      const res = await fetch("/api/external/comments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${getToken()}` },
-        body: JSON.stringify({ anime_id: Number(animeId), comment: editorRef.current?.innerHTML })
-      });
-      const json = await res.json();
-      if (res.ok) {
-        setComments([json.data, ...comments]);
-        if (editorRef.current) editorRef.current.innerHTML = '';
-        setCaptcha(c => ({ ...c, input: '' }));
-        setUi(prev => ({ ...prev, charCount: 0 }));
-        refreshCaptcha(true);
-      }
-    } catch { alert("Ошибка сети"); }
-    setUi(prev => ({ ...prev, isSubmitting: false }));
+    setUi(p => ({ ...p, sub: true }));
+    call("/api/external/comments", "POST", { anime_id: +animeId, comment: html })
+      .then(j => { setComments([j.data, ...comments]); if(edRef.current) edRef.current.innerHTML = ''; setCp(c => ({ ...c, input: '' })); setUi(p => ({ ...p, len: 0 })); genCp(); })
+      .finally(() => setUi(p => ({ ...p, sub: false })));
   };
 
-  const deleteComment = async () => {
-    try {
-      const res = await fetch(`/api/external/comments/${commentToDelete}`, {
-        method: "DELETE", headers: { "Authorization": `Bearer ${getToken()}` }
-      });
-      if (res.ok) setComments(prev => prev.filter(c => c.id !== commentToDelete));
-    } finally { setCommentToDelete(null); }
-  };
-
-  if (!ui.mounted) return null;
+  if (!ui.m) return null;
   if (user.loading) return <div className="py-10 text-center text-[#39bcba] animate-pulse font-bold">Загрузка...</div>;
 
   return (
     <div className="lg:col-span-2">
-      <h2 className="text-xl font-black mb-6 border-l-4 border-[#39bcba] pl-3 uppercase">Отзывы и обсуждение</h2>
-
-      {user.isLoggedIn ? (
-        <div className="bg-gray-50 dark:bg-[#161616] p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+      <h2 className="text-xl font-black mb-6 border-l-4 border-[#39bcba] pl-3 uppercase">Отзывы</h2>
+      {user.ok ? (
+        <div className="bg-gray-50 border-gray-300 dark:bg-[#161616] p-6 rounded-lg border dark:border-gray-800">
           <div className="mb-4 flex items-center gap-3">
-            <UserAvatar name={user.name} avatar={getAvatar(user.avatar)} size="10" />
-            <div>
-              <p className="text-[10px] text-gray-400 font-bold uppercase">Вы вошли как</p>
-              <p className="font-black dark:text-gray-200">{user.name}</p>
+            <Avatar name={user.name} src={getImg(user.avatar as any)} size="10" />
+            <p className="font-black dark:text-gray-200">{user.name}</p>
+          </div>
+          <div className="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-[#111111]">
+            <div className="flex p-2 gap-1 border-gray-300 bg-gray-50/60 dark:bg-[#1a1a1a] border-b dark:border-gray-800">
+              <Btn icon={<FaBold size={12}/>} onClick={() => exec('bold')} />
+              <Btn icon={<FaItalic size={12}/>} onClick={() => exec('italic')} />
+              <div className="relative">
+                <Btn icon={<FaSmile size={14}/>} onClick={() => setUi(p => ({ ...p, emo: !p.emo }))} active={ui.emo} />
+                {ui.emo && <div className="absolute top-full left-0 mt-2 p-2 bg-white dark:bg-[#111111] border dark:border-gray-700 rounded-lg shadow-xl z-50 grid grid-cols-5 w-44">
+                  {EMOJIS.map(e => <button key={e} onClick={() => { exec('insertText', e); setUi(p => ({ ...p, emo: false })); }} className="hover:scale-110 p-1">{e}</button>)}
+                </div>}
+              </div>
+            </div>
+            <div ref={edRef} contentEditable onInput={() => setUi(p => ({ ...p, len: edRef.current?.innerText.length || 0 }))} className="p-4 h-32 overflow-y-auto outline-none text-sm dark:text-gray-200" />
+          </div>
+          <div className="text-right text-[10px] font-bold text-gray-400 my-2 uppercase">{ui.len} / 1000</div>
+          <div className="flex flex-col sm:flex-row gap-4 mb-4"> 
+            <input className="grow p-3 rounded-lg border-gray-400 dark:bg-[#111111] border dark:border-gray-700 text-sm outline-none" placeholder="Код" value={cp.input} onChange={e => setCp(c => ({ ...c, input: e.target.value }))} />
+           
+            <div className="flex items-center gap-3">
+              <div className="bg-gray-200 border-gray-600 dark:bg-[#1a1a1a] px-6 py-2 rounded-lg font-black tracking-widest italic text-xl border dark:border-gray-700">{cp.text}</div>
+              <button onClick={genCp} disabled={!cp.can} className={!cp.can ? 'text-gray-600' : 'text-[#39bcba]'}><FaSyncAlt /></button>
+              {!cp.can && <span className="text-[9px] font-bold text-gray-400 uppercase">через {cp.t}с</span>}
             </div>
           </div>
+          <button onClick={send} disabled={ui.sub} className="w-full bg-[#39bcba] text-white font-black py-4 rounded-lg uppercase text-xs tracking-widest disabled:opacity-50">{ui.sub ? '...' : 'Отправить'}</button>
+        </div>
+      ) : <Prompt />}
 
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-[#111111]">
-            <div className="flex p-2 gap-1 bg-gray-50/60 dark:bg-[#1a1a1a] border-b dark:border-gray-800">
-              <ToolbarBtn icon={<FaBold size={12}/>} onClick={() => exec('bold')} />
-              <ToolbarBtn icon={<FaItalic size={12}/>} onClick={() => exec('italic')} />
-              <ToolbarBtn icon={<FaQuoteRight size={12}/>} onClick={() => {
-                const sel = window.getSelection()?.toString();
-                exec('insertHTML', `<blockquote class="border-l-4 border-[#39bcba] pl-2 italic my-2 bg-gray-50 dark:bg-gray-800 p-1 opacity-80">${sel || 'Цитата'}</blockquote>`);
-              }} />
-              <div className="relative">
-                <ToolbarBtn icon={<FaSmile size={14}/>} onClick={() => setUi(p => ({ ...p, showEmojis: !p.showEmojis }))} active={ui.showEmojis} />
-                {ui.showEmojis && (
-                  <div className="absolute top-full left-0 mt-2 p-2 bg-white dark:bg-[#111111] border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 grid grid-cols-5 gap-1 w-44">
-                    {EMOJIS.map(e => <button key={e} onClick={() => { exec('insertText', e); setUi(p => ({ ...p, showEmojis: false })); }} className="hover:scale-110 p-1">{e}</button>)}
+      <div className="mt-12 space-y-6">
+        {comments.map(c => (
+          <div key={c.id} className="flex gap-4 p-5 bg-white dark:bg-[#181818] rounded-lg border border-gray-400 dark:border-gray-800">
+            <Avatar name={c.user.name} src={getImg(c.user.avatar)} size="12" />
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between mb-2">
+                <div className="flex items-center gap-2 text-sm font-black dark:text-gray-200">{c.user.name} <span className="text-[10px] text-gray-400 uppercase">{new Date(c.created_at).toLocaleDateString()}</span></div>
+                {user.ok && user.name === c.user.name && (
+                  <div className="flex gap-2 text-gray-400">
+                    <button onClick={() => setUi(p => ({ ...p, edit: ui.edit === c.id ? null : c.id }))} className='hover:text-teal-400'>{ui.edit === c.id ? <FaTimes/> : <FaEdit/>}</button>
+                    <button onClick={() => setUi(p => ({ ...p, del: c.id }))} className="hover:text-red-500"><FaTrash/></button>
                   </div>
                 )}
               </div>
-            </div>
-            <div ref={editorRef} contentEditable onInput={() => setUi(p => ({ ...p, charCount: editorRef.current?.innerText.length || 0 }))} className="p-4 h-32 overflow-y-auto outline-none text-sm dark:text-gray-200" />
-          </div>
-
-          <div className="text-right mt-1 mb-4 text-[10px] font-bold text-gray-400 uppercase">{ui.charCount} / {MAX_LENGTH}</div>
-
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <input className="grow p-3.5 rounded-lg dark:bg-[#111111] border dark:border-gray-700 text-sm outline-none focus:border-[#39bcba]" placeholder="Код проверки" value={captcha.input} onChange={e => setCaptcha(c => ({ ...c, input: e.target.value }))} />
-            <div className="flex flex-col items-center">
-              <div className="flex items-center gap-3">
-                <div className="bg-gray-200 dark:bg-[#1a1a1a] px-6 py-3 rounded-lg font-black tracking-[0.4em] italic text-xl border dark:border-gray-700">{captcha.text}</div>
-                <button onClick={() => refreshCaptcha()} disabled={!captcha.canRefresh} className={!captcha.canRefresh ? 'text-gray-300' : 'text-[#39bcba]'}><FaSyncAlt /></button>
-              </div>
-              {!captcha.canRefresh && <span className="text-[9px] font-bold text-gray-400 uppercase">через {captcha.timer}с</span>}
-            </div>
-          </div>
-
-          <button onClick={submitComment} disabled={ui.isSubmitting} className="w-full bg-[#39bcba] text-white font-black py-4 rounded-lg uppercase text-xs tracking-widest disabled:opacity-50">
-            {ui.isSubmitting ? 'Отправка...' : 'Отправить'}
-          </button>
-        </div>
-      ) : (
-        <LoginPrompt />
-      )}
-
-      <div className="mt-12 space-y-6">
-        <h3 className="font-black text-sm uppercase tracking-widest">Всего сообщений ({comments.length})</h3>
-        {comments.map(c => (
-          <div key={c.id} className="flex gap-4 p-5 bg-white dark:bg-[#181818] rounded-lg border dark:border-gray-800">
-            <UserAvatar name={c.user.name} avatar={getAvatar(c.user.avatar)} size="12" />
-            <div className="flex-1 min-w-0">
-              <div className="flex justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <p className="font-black text-sm dark:text-gray-200">{c.user.name}</p>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase">{new Date(c.created_at).toLocaleDateString()}</span>
+              {ui.edit === c.id ? (
+                <div>
+                  <div ref={upRef} contentEditable dangerouslySetInnerHTML={{ __html: c.comment }} className="p-3 border dark:border-gray-700 rounded bg-gray-50 dark:bg-[#111111] outline-none text-sm mb-2" />
+                  <button onClick={() => call(`/api/external/comments/${c.id}`, "PUT", { comment: upRef.current?.innerHTML }).then(j => { setComments(prev => prev.map(x => x.id === c.id ? j.data : x)); setUi(p => ({ ...p, edit: null })); })} className="bg-[#39bcba] text-white px-4 py-1.5 rounded text-[10px] font-black uppercase flex items-center gap-2"><FaSave /> Ок</button>
                 </div>
-                {user.isLoggedIn && user.name === c.user.name && (
-                  <button onClick={() => setCommentToDelete(c.id)} className="text-gray-300 hover:text-red-500"><FaTrash size={12} /></button>
-                )}
-              </div>
-              <div className="text-sm dark:text-gray-400 prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: c.comment }} />
+              ) : <div className="text-sm dark:text-gray-400 prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: c.comment }} />}
             </div>
           </div>
         ))}
       </div>
-
-      <Modal isOpen={commentToDelete !== null} onClose={() => setCommentToDelete(null)} onConfirm={deleteComment} title="Удаление" message="Удалить комментарий навсегда?" />
+      <Modal isOpen={!!ui.del} onClose={() => setUi(p => ({ ...p, del: null }))} onConfirm={() => call(`/api/external/comments/${ui.del}`, "DELETE").then(() => { setComments(p => p.filter(x => x.id !== ui.del)); setUi(p => ({ ...p, del: null })); })} title="Удалить?" message="Это действие необратимо." />
     </div>
   );
 }
 
-// Вспомогательные мини-компоненты
-const ToolbarBtn = ({ icon, onClick, active = false }: any) => (
-  <button onClick={onClick} className={`p-2 rounded-lg transition ${active ? 'text-[#39bcba] bg-white dark:bg-gray-800' : 'text-gray-500 hover:bg-white dark:hover:bg-gray-800'}`}>{icon}</button>
+const Btn = ({ icon, onClick, active }: any) => (
+  <button onClick={onClick} className={`p-2 rounded transition ${active ? 'text-[#39bcba] bg-white dark:bg-gray-800' : 'text-gray-500 hover:bg-white dark:hover:bg-gray-800'}`}>{icon}</button>
 );
 
-const UserAvatar = ({ name, avatar, size }: any) => (
-  avatar ? <img src={avatar} alt={name} className={`w-${size} h-${size} rounded-full object-cover border-2 border-[#39bcba]`} />
-         : <div className={`w-${size} h-${size} rounded-full bg-[#39bcba] flex items-center justify-center text-white font-bold`}>{name?.[0].toUpperCase()}</div>
+const Avatar = ({ name, src, size }: any) => (
+  src ? <img src={src} className={`w-${size} h-${size} rounded-full object-cover border-2 border-[#39bcba]`} alt="" />
+      : <div className={`w-${size} h-${size} rounded-full bg-[#39bcba] flex items-center justify-center text-white font-bold`}>{name?.[0].toUpperCase()}</div>
 );
 
-const LoginPrompt = () => (
+const Prompt = () => (
   <div className="bg-gray-50 dark:bg-[#0b0f1a] p-10 rounded-lg border-2 border-dashed dark:border-gray-800 text-center">
     <FaLock className="mx-auto mb-4 text-gray-300" size={24} />
-    <h3 className="font-black uppercase mb-2">Доступ ограничен</h3>
-    <Link href="/login" className="inline-block bg-[#39bcba] text-white px-10 py-3 rounded-lg font-black text-xs uppercase">Войти</Link>
+    <Link href="/login" className="bg-[#39bcba] text-white px-10 py-3 rounded-lg font-black text-xs uppercase inline-block">Войти</Link>
   </div>
 );

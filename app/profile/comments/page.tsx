@@ -13,13 +13,13 @@ import {
 
 interface UserComment {
   id: number;
-  comment?: string;
-  content?: string;
+  comment: string;
   created_at: string;
   anime?: {
     id: number;
     title: string;
-    poster_url: string;
+    slug: string;
+    poster_url?: string;
   };
 }
 
@@ -42,16 +42,20 @@ export default function MyCommentsPage() {
       }
 
       try {
-      const res = await fetch('/api/external/user/comments', {
-  headers: { Authorization: `Bearer ${token}` },
-});
+        const res = await fetch('/api/external/my-comments', {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Accept': 'application/json'
+          },
+        });
+        
         if (res.ok) {
           const json = await res.json();
           const data = json.data || json;
           setComments(Array.isArray(data) ? data : []);
         }
       } catch (e) {
-        console.error("Ошибка при загрузке комментариев:", e);
+        console.error(e);
       } finally {
         setLoading(false);
       }
@@ -60,7 +64,7 @@ export default function MyCommentsPage() {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Удалить этот комментарий навсегда?')) return;
+    if (!confirm('Удалить этот комментарий?')) return;
     const token = localStorage.getItem('userToken');
     try {
       const res = await fetch(`/api/external/comments/${id}`, {
@@ -69,12 +73,9 @@ export default function MyCommentsPage() {
       });
       if (res.ok) {
         setComments((p) => p.filter((c) => c.id !== id));
-      } else {
-        alert("Не удалось удалить комментарий");
       }
     } catch (e) {
       console.error(e);
-      alert("Ошибка сети");
     }
   };
 
@@ -133,7 +134,6 @@ export default function MyCommentsPage() {
                 className="group rounded-4xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#161616] p-6 md:p-8 hover:border-[#39bcba]/30 transition-all duration-500 shadow-sm"
               >
                 <div className="flex flex-col md:flex-row gap-8">
-                  {/* Постер аниме */}
                   {c.anime && (
                     <Link href={`/anime/${c.anime.id}`} className="shrink-0 mx-auto md:mx-0">
                       <div className="w-28 aspect-2/3 rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-2xl bg-gray-200 dark:bg-gray-800">
@@ -181,7 +181,7 @@ export default function MyCommentsPage() {
                       <div
                         className="prose dark:prose-invert max-w-none text-sm leading-relaxed text-slate-600 dark:text-gray-300 wrap-break-word 
                           [&_blockquote]:border-l-4 [&_blockquote]:border-[#39bcba] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-2 [&_blockquote]:bg-gray-50 dark:[&_blockquote]:bg-white/5 [&_blockquote]:p-2"
-                        dangerouslySetInnerHTML={{ __html: c.comment || c.content || '' }}
+                        dangerouslySetInnerHTML={{ __html: c.comment || '' }}
                       />
                     </div>
                   </div>

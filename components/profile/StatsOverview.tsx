@@ -49,23 +49,26 @@ export const StatsOverview = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#161616] rounded-lg p-8 shadow-sm border border-slate-200 dark:border-white/5 grid md:grid-cols-2 gap-8 transition-colors">
-      <div className="flex items-center gap-8">
+
+    <div className="bg-white dark:bg-[#161616] rounded-xl p-5 md:p-8 shadow-sm border border-slate-200 dark:border-white/5 grid grid-cols-1 lg:grid-cols-2 gap-8 transition-colors">
+      
+
+      <div className="flex flex-col sm:flex-row items-center gap-6 md:gap-8">
         <div
-          className="relative w-40 h-40 rounded-full shrink-0"
+          className="relative w-36 h-36 md:w-40 md:h-40 rounded-full shrink-0 shadow-inner"
           style={pieChartStyle}
         >
           <div className="absolute inset-2 bg-white dark:bg-[#111111] rounded-full flex flex-col items-center justify-center">
-            <span className="text-3xl font-black text-gray-800 dark:text-gray-200">
+            <span className="text-2xl md:text-3xl font-black text-gray-800 dark:text-gray-200">
               {total}
             </span>
-            <span className="text-[10px] text-slate-500 dark:text-gray-500 font-bold uppercase">
+            <span className="text-[10px] text-slate-500 dark:text-gray-500 font-bold uppercase tracking-wider">
               Тайтлов
             </span>
           </div>
         </div>
 
-        <div className="space-y-2 flex-1">
+        <div className="space-y-2 w-full flex-1">
           <StatRow label="Смотрю" count={watching} color="bg-green-500" />
           <StatRow label="В планах" count={planned} color="bg-purple-500" />
           <StatRow label="Завершено" count={completed} color="bg-blue-500" />
@@ -74,20 +77,24 @@ export const StatsOverview = ({
         </div>
       </div>
 
-      <div className="flex flex-col justify-center bg-slate-100 dark:bg-white/5 p-6 rounded-2xl">
-        <p className="text-slate-500 dark:text-gray-500 text-xs uppercase font-bold mb-1">
-          Затрачено времени
-        </p>
-        <p className="text-2xl font-black text-gray-800 dark:text-gray-200 mb-6">
-          {watchTime.days}д {watchTime.hours}ч {watchTime.minutes}м
-        </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-col justify-center gap-6 bg-slate-50 dark:bg-white/3 p-6 rounded-2xl border border-slate-100 dark:border-white/5">
+        <div>
+          <p className="text-slate-500 dark:text-gray-500 text-[10px] md:text-xs uppercase font-bold mb-1 tracking-tight">
+            Затрачено времени
+          </p>
+          <p className="text-xl md:text-2xl font-black text-gray-800 dark:text-gray-200 wrap-break-word">
+            {watchTime.days}д {watchTime.hours}ч {watchTime.minutes}м
+          </p>
+        </div>
 
-        <p className="text-slate-500 dark:text-gray-500 text-xs uppercase font-bold mb-1">
-          Просмотрено эпизодов
-        </p>
-        <p className="text-2xl font-black text-gray-800 dark:text-gray-200">
-          {historyCount}
-        </p>
+        <div className="sm:border-l sm:pl-6 lg:border-l-0 lg:pl-0 lg:mt-0">
+          <p className="text-slate-500 dark:text-gray-500 text-[10px] md:text-xs uppercase font-bold mb-1 tracking-tight">
+            Просмотрено эпизодов
+          </p>
+          <p className="text-xl md:text-2xl font-black text-gray-800 dark:text-gray-200">
+            {historyCount}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -102,12 +109,12 @@ const StatRow = ({
   count: number;
   color: string;
 }) => (
-  <div className="flex items-center gap-2 text-sm">
-    <div className={`w-2 h-2 rounded-full ${color}`} />
-    <span className="flex-1 text-slate-600 dark:text-gray-400">
+  <div className="flex items-center gap-3 text-sm py-0.5">
+    <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${color}`} />
+    <span className="flex-1 text-slate-600 dark:text-gray-400 font-medium">
       {label}
     </span>
-    <span className="font-bold text-gray-800 dark:text-gray-200">
+    <span className="font-bold text-gray-800 dark:text-gray-200 tabular-nums">
       {count}
     </span>
   </div>

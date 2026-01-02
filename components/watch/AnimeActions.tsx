@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { FaChevronDown, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaChevronDown, FaHeart, FaHeartBroken } from 'react-icons/fa';
 
 interface AnimeActionsProps {
   animeId: number;
@@ -196,14 +196,13 @@ export default function AnimeActions({
 
       <button
         onClick={toggleFavorite}
-        className={`flex items-center gap-2 px-4 py-3 rounded-xl border font-bold text-sm transition-all shadow-sm ${
+        className={`flex items-center gap-2 px-4 py-3 rounded-full border font-bold text-2xl transition-all shadow-sm ${
           isFavorite
-            ? 'border-pink-200 bg-pink-50 text-pink-500'
+            ? 'border-pink-200 bg-pink-50 text-red-600'
             : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
         }`}
       >
-        {isFavorite ? <FaHeart /> : <FaRegHeart />}
-        <span>{favCount}</span>
+        {isFavorite ? <FaHeart /> : <FaHeartBroken />}
       </button>
     </div>
   );

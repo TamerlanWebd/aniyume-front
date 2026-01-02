@@ -34,7 +34,7 @@ useEffect(() => {
       if (res.ok) {
         const data = await res.json();
         if (data && data.rating) {
-          setUserRating(data.rating);  // убери Math.round(data.rating / 2)
+          setUserRating(data.rating);  
         }
       }
     } catch (err) {

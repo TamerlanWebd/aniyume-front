@@ -12,6 +12,7 @@ export async function handleProxy(
     const searchParams = req.nextUrl.search;
 
     const privateKeywords = [
+       "user",
       "status",
       "profile",
       "favorites",
