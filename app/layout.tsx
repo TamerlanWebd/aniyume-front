@@ -3,8 +3,8 @@ import { Inter } from 'next/font/google'
 import LayoutClient from './layoutClient'
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
+import '@/lib/slick-styles'
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
