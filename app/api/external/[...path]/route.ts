@@ -4,10 +4,11 @@ const BASE_URL = "http://164.90.185.95/api/v1";
 
 export async function handleProxy(
   req: NextRequest,
-  { params }: { params: { path: string[] } }
+  props: { params: Promise<{ path: string[] }> }
 ) {
   try {
-    const { path } = await params;
+    const params = await props.params;
+    const path = params.path;
     const pathStr = path.join("/");
     const searchParams = req.nextUrl.search;
 
