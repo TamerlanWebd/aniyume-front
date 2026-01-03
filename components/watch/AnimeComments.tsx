@@ -5,7 +5,7 @@ import { FaBold, FaItalic, FaQuoteRight, FaLock, FaSyncAlt, FaSmile, FaTrash, Fa
 import Modal from '../layout/Modal';
 
 const EMOJIS = ['😊', '😂', '😍', '🤔', '😎', '😭', '😮', '🔥', '✨', '👍', '👎', '❤️', '😱', '🙌', '👀', '🎉', '🌟', '🍀', '🍕', '🚀'];
-const API = "http://164.90.185.95/storage/";
+const API = "/api-storage/";
 
 export default function AnimeComments({ animeId }: { animeId: string | number }) {
   const [comments, setComments] = useState<any[]>([]);
@@ -25,8 +25,12 @@ export default function AnimeComments({ animeId }: { animeId: string | number })
     return res.ok ? res.json() : Promise.reject();
   };
 
-  const getImg = (p: string) => p?.startsWith('http') ? p : p ? `${API}${p}` : null;
-
+const getImg = (p: string) => {
+    if (!p) return null;
+    return p.startsWith('http') 
+      ? p.replace("http://164.90.185.95/storage/", "/api-storage/") 
+      : `${API}${p}`;
+  };
   useEffect(() => {
     setUi(p => ({ ...p, m: true }));
     genCp();

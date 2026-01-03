@@ -58,10 +58,12 @@ export default function Header() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const getAvatarUrl = () => {
+const getAvatarUrl = () => {
     if (!user?.avatar) return null;
-    const baseUrl = "http://164.90.185.95/storage/";
-    const fullPath = user.avatar.startsWith('http') ? user.avatar : `${baseUrl}${user.avatar}`;
+    const fullPath = user.avatar.startsWith('http') 
+      ? user.avatar.replace('http://164.90.185.95/storage/', '/api-storage/') 
+      : `/api-storage/${user.avatar}`;
+      
     return `${fullPath}?t=${Date.now()}`;
   };
 

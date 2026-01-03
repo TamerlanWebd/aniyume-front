@@ -20,6 +20,14 @@ const nextConfig: NextConfig = {
     ],
     unoptimized: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api-storage/:path*',
+        destination: 'http://164.90.185.95/storage/:path*',
+      },
+    ];
+  },
   async headers() {
     return [
       {

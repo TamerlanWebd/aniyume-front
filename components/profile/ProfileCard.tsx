@@ -24,17 +24,14 @@ export const ProfileCard = ({
   counts,
   onLogout,
 }: ProfileCardProps) => {
-  const getAvatarUrl = () => {
+const getAvatarUrl = () => {
     if (!user.avatar) return null;
-
-    const baseUrl = "http://164.90.185.95/storage/";
     const fullPath = user.avatar.startsWith("http")
-      ? user.avatar
-      : `${baseUrl}${user.avatar}`;
+      ? user.avatar.replace("http://164.90.185.95/storage/", "/api-storage/")
+      : `/api-storage/${user.avatar}`;
 
     return `${fullPath}${fullPath.includes("?") ? "&" : "?"}t=${Date.now()}`;
   };
-
   const avatarUrl = getAvatarUrl();
 
   return (

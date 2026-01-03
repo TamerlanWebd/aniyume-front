@@ -38,11 +38,12 @@ useEffect(() => {
             status_text: user.custom_status || user.status_text || "",
           });
           
-          const avatar = user.avatar || user.avatar_url;
-          if (avatar) {
-            const baseUrl = "http://164.90.185.95/storage/";
-            const fullUrl = avatar.startsWith("http") ? avatar : `${baseUrl}${avatar}`;
-            setPreviewUrl(`${fullUrl}?t=${Date.now()}`);
+         const avatar = user.avatar || user.avatar_url;
+        if (avatar) {
+            const fullUrl = avatar.startsWith("http") 
+    ? avatar.replace("http://164.90.185.95/storage/", "/api-storage/") 
+    : `/api-storage/${avatar}`;
+     setPreviewUrl(`${fullUrl}?t=${Date.now()}`);
           }
         }
       } catch (err) {
