@@ -79,34 +79,7 @@ export default function AnimeViewPage() {
     fetchData();
   }, [id]);
 
-const handleProgressUpdate = async (episodeId: number, seconds: number, completed: boolean = false) => {
-  const currentToken = token || localStorage.getItem("userToken");
-  if (!currentToken || !episodeId || seconds < 1) return; 
 
-  try {
-    const res = await fetch(`${API_BASE}/watch-history`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${currentToken}`,
-      },
-      body: JSON.stringify({ 
-        episode_id: Number(episodeId), 
-        progress: Math.floor(seconds), 
-        completed: completed 
-      }),
-    });
-
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error("Ошибка сервера (watch-history):", errorText);
-    } else {
-      console.log(`Успешно сохранено: ${seconds} сек. для эпизода ${episodeId}`);
-    }
-  } catch (error) {
-    console.error("Ошибка сети:", error);
-  }
-};
 
   const handleEpisodeWatch = async (episodeNumber: number) => {
     if (!token || !id) return;
