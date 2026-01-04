@@ -19,7 +19,7 @@ export default function AnimePlayer({ animeId, episodes, onEpisodeSelect }: Anim
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('userToken') : null;
 
-  // Подключаем наш хук
+
   useWatchTracker({
     episodeId: currentEpisode?.id,
     token: token
