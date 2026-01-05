@@ -11,6 +11,7 @@ interface AnimeItem {
   poster_url: string;
   year?: number;
   episodes_count?: number;
+  status?: string;
 }
 
 const DAYS_INFO = [
@@ -37,9 +38,10 @@ export default function SchedulePage() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`${API_BASE}/anime?status=ongoing&per_page=60&sort=popularity`);
+        const res = await fetch(`${API_BASE}/anime?status=ongoing&per_page=100&sort=newest`);
         if (!res.ok) throw new Error('Failed');
         const json = await res.json();
+        
         const list: AnimeItem[] = Array.isArray(json.data) ? json.data : [];
 
         const grouped: Record<number, AnimeItem[]> = {};
@@ -53,6 +55,8 @@ export default function SchedulePage() {
         });
 
         setSchedule(grouped);
+      } catch (error) {
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -168,7 +172,7 @@ export default function SchedulePage() {
                           unoptimized
                         />
                         <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-lg">
-                          {anime.id % 24 + 1} серия
+                          {anime.episodes_count && anime.episodes_count > 0 ? `${anime.episodes_count} сер.` : 'Анонс'}
                         </div>
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                           <div className="w-12 h-12 bg-[#21D0B8] rounded-full flex items-center justify-center text-white shadow-lg transform scale-50 group-hover:scale-100 transition-all duration-300">
