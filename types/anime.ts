@@ -30,4 +30,5 @@ export interface AnimeDetails {
   status: string;
   genres?: Genre[];
   tags?: Genre[];
+  episodes_count: number;
 }

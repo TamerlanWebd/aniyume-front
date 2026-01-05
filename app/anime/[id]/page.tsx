@@ -102,7 +102,7 @@ export default function AnimeViewPage() {
 
  return (
   <div className="min-h-screen bg-white dark:bg-[#111111] text-black dark:text-gray-200 font-sans overflow-x-hidden transition-colors">
-    <AnimeHero anime={anime} episodesCount={allEpisodes.length} />
+    <AnimeHero anime={anime} episodesCount={anime.episodes_count} />
 
     <div className="container mx-auto px-4 md:px-12 py-8">
       <div className="flex flex-col md:flex-row gap-8 items-start">
